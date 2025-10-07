@@ -1,0 +1,24 @@
+package bel.dev.sa_backend.dto;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class UtilisateurResponseDTO {
+
+    private String id;
+    private String nom;
+    private String prenom;
+    private String email;
+   
+
+    // Getters & Setters
+
+}
