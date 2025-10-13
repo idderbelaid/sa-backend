@@ -26,6 +26,8 @@ import bel.dev.sa_backend.mapper.SentimentMapper;
 import bel.dev.sa_backend.mapper.UtilisateurMapper;
 import bel.dev.sa_backend.repository.RoleRepository;
 import bel.dev.sa_backend.repository.UtilisateurRepository;
+import bel.dev.sa_backend.service.rabbitMQ.RabbitMQService;
+import bel.dev.sa_backend.service.rabbitMQ.KafkaProducer;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,8 @@ public class UtilisateurService implements UserDetailsService {
     private UtilisateurRepository utilisateurRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private RoleRepository roleRepository;
+    private RabbitMQService rabbitMQService;
+    private KafkaProducer KafkaProducer;
 
 
 
@@ -81,6 +85,8 @@ public class UtilisateurService implements UserDetailsService {
         Utilisateur user = UtilisateurMapper.toEntity(utilisateur);
         Utilisateur userSaved = utilisateurRepository.save(user);
         validationService.enregister(userSaved);
+        //this.rabbitMQService.publier(userSaved);
+        this.KafkaProducer.sendMessage(UtilisateurMapper.toResponseDTO(userSaved));
         return UtilisateurMapper.toResponseDTO(userSaved);
     }
     public String generateCustomId() {
