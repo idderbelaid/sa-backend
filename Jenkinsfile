@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Cloner le projet') {
             steps {
-                git 'https://github.com/idderbelaid/sa-backend.git'//update url of git repository
+                git branch: 'main', url:  'https://github.com/idderbelaid/sa-backend.git'//update url of git repository
             }
         }
 
