@@ -3,7 +3,7 @@ package bel.dev.sa_backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Service;
 
 import bel.dev.sa_backend.Enums.TypeSentiment;

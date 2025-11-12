@@ -5,8 +5,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import bel.dev.sa_backend.dto.UtilisateurResponseDTO;
-import bel.dev.sa_backend.entities.Utilisateur;
-import lombok.AllArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

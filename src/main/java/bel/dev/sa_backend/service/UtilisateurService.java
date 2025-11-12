@@ -22,7 +22,6 @@ import bel.dev.sa_backend.dto.UtilisateurResponseDTO;
 import bel.dev.sa_backend.entities.Role;
 import bel.dev.sa_backend.entities.Utilisateur;
 import bel.dev.sa_backend.entities.Validation;
-import bel.dev.sa_backend.mapper.SentimentMapper;
 import bel.dev.sa_backend.mapper.UtilisateurMapper;
 import bel.dev.sa_backend.repository.RoleRepository;
 import bel.dev.sa_backend.repository.UtilisateurRepository;
@@ -41,7 +40,7 @@ public class UtilisateurService implements UserDetailsService {
     private UtilisateurRepository utilisateurRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private RoleRepository roleRepository;
-    private RabbitMQService rabbitMQService;
+ 
     private KafkaProducer KafkaProducer;
 
 
