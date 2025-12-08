@@ -1,5 +1,7 @@
 package bel.dev.sa_backend.entities;
 
+import java.util.Date;
+
 import bel.dev.sa_backend.Enums.TypeSentiment;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -37,6 +39,11 @@ public class Sentiment {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "utilisateur")
     private Utilisateur utilisateur;
+
+    private Date creation;
+
+
+
     
 
 

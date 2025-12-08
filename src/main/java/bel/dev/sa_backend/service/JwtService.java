@@ -54,7 +54,7 @@ public class JwtService {
         this.disableOldToken(user);
         log.info("disableOldToken ok ");
         final Map<String, String> jwtMap = new HashMap<>(this.generateJWT(user));
-
+        log.info("generateJWT ok ");
         RefreshToken refreshToken = RefreshToken.builder()
                                     .valeur(UUID.randomUUID().toString())
                                     .expire(false)
@@ -99,21 +99,25 @@ public class JwtService {
     }
 
     private Map<String, String> generateJWT(Utilisateur user) {
+        log.info("generateJWT en cours... ");
         final long currentTime= System.currentTimeMillis();
+        log.info("currentTime ok... " + currentTime);
         final long expirationTime  = currentTime + 60*1000;
-        
+        log.info("expirationTime ok... " + expirationTime);
         final Map<String, Object> claims = Map.of(
             "nom", user.getNom(),
             Claims.EXPIRATION, new Date(expirationTime),
             Claims.SUBJECT, user.getEmail()
         );
+        log.info("claims ok... ");
         final String bearerToken  = Jwts.builder()
             .setIssuedAt(new Date(currentTime))
-            .setExpiration(new Date(currentTime + 30*60*1000))
+            .setExpiration(new Date(currentTime + 15 * 60 * 1000))
             .setSubject(user.getEmail())
             .setClaims(claims)
             .signWith( SignatureAlgorithm.HS256, getKey())
             .compact();
+        log.info("bearer ok... ");
         return Map.of(BEARER, bearerToken);
     }
 
@@ -157,7 +161,7 @@ public class JwtService {
 
     }
 
-    @Scheduled(cron = "1 */1 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void removeToken(){
         log.info("Suppression des tokens expirées et désactivées");
         this.jwtRepository.deleteAllByExpiredTrueAndDesactiveTrue();

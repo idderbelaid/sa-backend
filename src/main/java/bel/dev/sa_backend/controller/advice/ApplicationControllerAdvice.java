@@ -31,13 +31,13 @@ public class ApplicationControllerAdvice {
         return new ErrorEntity(null, exception.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({RuntimeException.class})
     public @ResponseBody ErrorEntity runtimeException(RuntimeException exception){
-        return new ErrorEntity("401", exception.getMessage());
+        return new ErrorEntity("500", exception.getMessage());
     }
 
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({BadCredentialsException.class})
     public @ResponseBody ProblemDetail badCredentiaProblemDetail(final BadCredentialsException badCredentialsException){
         final ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Identifiants invalides");

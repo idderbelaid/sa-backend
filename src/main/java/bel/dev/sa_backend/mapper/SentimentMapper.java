@@ -13,6 +13,7 @@ public class SentimentMapper {
         dto.setId(sentiment.getId());
         dto.setTexte(sentiment.getTexte());
         dto.setUtilisateurEmail(sentiment.getUtilisateur().getEmail());
+        dto.setCreation(sentiment.getCreation());
         return dto;
     }
 }

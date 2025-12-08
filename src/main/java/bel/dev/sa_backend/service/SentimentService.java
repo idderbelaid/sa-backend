@@ -3,7 +3,7 @@ package bel.dev.sa_backend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Service;
 
 import bel.dev.sa_backend.Enums.TypeSentiment;
@@ -31,7 +31,7 @@ public class SentimentService {
         Utilisateur user = this.utilisateurService.lireOuCreer(sentiment.getUtilisateur());
         //Utilisateur user =(Utilisateur) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         sentiment.setUtilisateur(user);
-
+        sentiment.setCreation(new java.util.Date());
         //Analyse le sentiment
 
         if(sentiment.getTexte().contains("pas"))

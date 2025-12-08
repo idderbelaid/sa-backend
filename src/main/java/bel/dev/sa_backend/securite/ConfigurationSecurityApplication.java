@@ -14,6 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 
@@ -38,6 +41,16 @@ public class ConfigurationSecurityApplication {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
+            
+            .cors(cors -> cors.configurationSource(request -> {
+                        var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                        corsConfig.setAllowedOrigins(List.of("http://localhost:3000"));
+                        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                        corsConfig.setAllowedHeaders(List.of("*"));
+                        corsConfig.setAllowCredentials(true);
+                        return corsConfig;
+                    }))
+
             .authorizeHttpRequests(
                 auth -> auth
                             .requestMatchers(HttpMethod.POST, "/utilisateurs/inscription").permitAll()
@@ -47,7 +60,20 @@ public class ConfigurationSecurityApplication {
                             .requestMatchers(HttpMethod.POST, "/utilisateurs/modifierPassword").permitAll()
                             .requestMatchers(HttpMethod.POST, "/utilisateurs/reinitiliserPassword").permitAll()
                             .requestMatchers(HttpMethod.POST, "/utilisateurs/refresh-token").permitAll()
-                            .requestMatchers(HttpMethod.GET, "/sentiment/sentiments" ).hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "sentiment/creer").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/sentiment/sentiments" ).permitAll()
+                            .requestMatchers(HttpMethod.GET, "/produit/produits" ).permitAll()
+                            .requestMatchers(HttpMethod.GET, "/produit/categories" ).permitAll()
+                            .requestMatchers(HttpMethod.POST, "/produit/creer" ).permitAll()
+                            .requestMatchers(HttpMethod.PUT, "/produit/update/*" ).permitAll()
+                            .requestMatchers(HttpMethod.DELETE, "/produit/delete/*" ).permitAll()
+                           
+                            // Premier ajout (pas de sessionId dans l’URL)
+                            .requestMatchers(HttpMethod.POST, "/guest-cart/items").permitAll()
+
+                            // Ajouts suivants (avec sessionId)
+                            .requestMatchers(HttpMethod.POST, "/guest-cart/*/items").permitAll()
+
                             .anyRequest().authenticated()
             )
             .sessionManagement(

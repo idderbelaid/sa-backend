@@ -40,11 +40,16 @@ public class UtilisateurMapper {
 
     // Mapping de l'entité vers le DTO de réponse
     public static UtilisateurResponseDTO toResponseDTO(Utilisateur utilisateur) {
+        System.out.println("toResponseDTO " );
         UtilisateurResponseDTO dto = new UtilisateurResponseDTO();
         dto.setId(utilisateur.getId());
         dto.setNom(utilisateur.getNom());
         dto.setPrenom(utilisateur.getPrenom());
         dto.setEmail(utilisateur.getEmail());
+        System.out.println("je pense que le problème vientd e ce qui suit " );
+        dto.setRoles(utilisateur.getRoles().stream()
+                                 .map(Role::getLibelle).collect(Collectors.toSet()));
+        System.out.println("je suis la le problème est pas la " );
         return dto;
     }
 }
