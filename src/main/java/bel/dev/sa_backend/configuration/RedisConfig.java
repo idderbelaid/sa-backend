@@ -15,7 +15,7 @@ import bel.dev.sa_backend.dto.GuestPanierDTO;
 public class RedisConfig {
 
     
-@Bean
+    @Bean
     public RedisTemplate<String, GuestPanierDTO> guestCartRedisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, GuestPanierDTO> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
