@@ -1,7 +1,7 @@
 package bel.dev.sa_backend.controller;
 
 import java.math.BigDecimal;
-import java.security.Principal;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +42,7 @@ public class InvitePanierController {
     ){
         System.out.println("hola am here");
         var panier = this.invitePanierService.addItem(sessionId, req.id, req.amount, req.price, 1800);
-
+        System.out.println("panier : " + panier);
         return ResponseEntity.ok(panier);
 
 

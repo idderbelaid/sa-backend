@@ -30,33 +30,40 @@ public class InvitePanierService {
         
         
         var cart = getCart(sessionId);
+        System.out.println("la carte que j'ai récupéré contient : " +cart);
         Produit produit = this.produitRepository.findById(id) 
         .orElseThrow( () -> new UsernameNotFoundException("Aucun produit avec cet identificant"));
-        
+        System.out.println("le produit que j'ai récupéré contient : " +produit.getName());
         if(amount > produit.getQuantity())
             throw new StockInsuffisantException(" insuffisant Stock !");
         
         BigDecimal priceDB = produit.getPrice();
         BigDecimal unitPriceBD = price;
 
-
+        System.out.println("Il n'avait as eu de manipulation");
         if (priceDB.compareTo(unitPriceBD) != 0) 
             throw new RuntimeException("Manipulation de prix d'achat");
+
         List<PanierItemDTO> items = new ArrayList<>(cart.items() != null ? cart.items() : List.of());
-
+        
         int idx = indexOfItemById(items, id);
+        System.out.println("idx :" +idx);
         if (idx >= 0) {
-
+            System.out.println("mettre à jour la quantité du produit");
             PanierItemDTO existing = items.get(idx);
+            System.out.println("existing quantity: " +existing);
             int newQty = existing.amount() + amount;
+            System.out.println("new quantity: " +newQty);
             items.set(idx, new PanierItemDTO(id, produit.getName(), newQty, existing.price()));
+
 
         } else {
             items.add(new PanierItemDTO(id, produit.getName(), amount, price));
         }
         BigDecimal total = computeTotal(items);
-
+        System.out.println("total: " +total);
         var updated = new GuestPanierDTO(items, total);
+        System.out.println("updated: " +updated);
         var k = key(sessionId);
         redis.opsForValue().set(k, updated);
         if (ttlSeconds > 0) {

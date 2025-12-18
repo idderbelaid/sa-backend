@@ -30,7 +30,7 @@ public class PanierItem {
     
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    private UUID id = UUID.randomUUID();
+    private String id = UUID.randomUUID().toString();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
@@ -43,7 +43,7 @@ public class PanierItem {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(
         name = "produit_id",
-        referencedColumnName = "id_produit",
+        referencedColumnName = "id",
         nullable = false,
         foreignKey = @ForeignKey(name = "fk_panier_item_produit")
     )
