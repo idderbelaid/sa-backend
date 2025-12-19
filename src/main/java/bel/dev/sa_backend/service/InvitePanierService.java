@@ -2,10 +2,8 @@ package bel.dev.sa_backend.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +15,6 @@ import bel.dev.sa_backend.entities.Produit;
 import bel.dev.sa_backend.exception.StockInsuffisantException;
 import bel.dev.sa_backend.repository.ProduitRepository;
 import lombok.AllArgsConstructor;
-import lombok.val;
 
 @AllArgsConstructor
 @Service
@@ -138,6 +135,40 @@ public class InvitePanierService {
         else{
             throw new RuntimeException("session ID introuvable");
         }
+
+    }
+
+    public void diminuerQantity(String sessionId, String id, long ttlSeconds) {
+        var cart = getCart(sessionId);
+        List<PanierItemDTO> items = new ArrayList<>(cart.items() != null ? cart.items() : List.of());
+        Produit produit = this.produitRepository.findById(id) 
+        .orElseThrow( () -> new UsernameNotFoundException("Aucun produit avec cet identificant"));
+        int idx = indexOfItemById(items, id);
+        System.out.println("id roduit à diminuer idx" +idx);
+        if(idx >= 0){
+            System.out.println("mettre à jour la quantité du produit");
+            PanierItemDTO existing = items.get(idx);
+            System.out.println("existing quantity: " +existing);
+            int newQty = existing.amount() - 1;
+            System.out.println("new quantity: " + newQty);
+            if(newQty <= 0){
+                items.remove(idx);
+            }
+            else
+            items.set(idx, new PanierItemDTO(id, produit.getName(), newQty, existing.price()));
+        }else{
+            throw new RuntimeException("Produit introuvable dans le panier");
+        }
+        BigDecimal total = computeTotal(items);
+        System.out.println("total: " +total);
+        var updated = new GuestPanierDTO(items, total);
+        System.out.println("updated: " +updated);
+        var k = key(sessionId);
+        redis.opsForValue().set(k, updated);
+        if (ttlSeconds > 0) {
+            redis.expire(k, java.time.Duration.ofSeconds(ttlSeconds));
+        }
+       
 
     }
 

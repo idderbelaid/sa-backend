@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.validation.Valid;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import bel.dev.sa_backend.Enums.PanierStatus;
+import bel.dev.sa_backend.controller.InvitePanierController.AddItemResponse;
+import bel.dev.sa_backend.controller.PanierDBController.AddCartItemRequest;
 import bel.dev.sa_backend.controller.PanierDBController.CartItemResponse;
 import bel.dev.sa_backend.controller.PanierDBController.CreateCartItemRequest;
 import bel.dev.sa_backend.controller.PanierDBController.UpdateCartItemRequest;
@@ -286,6 +290,31 @@ public class PanierService {
     }
     private String key(String sessionId) {
         return "cart:guest:" + sessionId;
+    }
+
+    public void diminuerQantity(String cartId, String itemId) {
+        PanierItem item = panierItemRepository.findById(itemId)
+                .filter(ci -> ci.getPanier().getId().equals(cartId))
+                .orElseThrow(() -> new CartItemNotFoundException(itemId, cartId));
+        int currentQty = item.getQuantity();
+        if (currentQty > 1) {
+            item.setQuantity(currentQty - 1);
+            panierItemRepository.save(item);
+        } else {
+            panierItemRepository.delete(item);
+        }
+    }
+
+    public void increaseItem(String cartId, String itemId) {
+         PanierItem item = panierItemRepository.findById(itemId)
+                .filter(ci -> ci.getPanier().getId().equals(cartId))
+                .orElseThrow(() -> new CartItemNotFoundException(itemId, cartId));
+        int currentQty = item.getQuantity();
+        System.out.println("currentQty : " + currentQty);
+        item.setQuantity(currentQty +1);
+        System.out.println("après modification : " + item.getQuantity());
+        panierItemRepository.save(item);
+       
     }
 
 

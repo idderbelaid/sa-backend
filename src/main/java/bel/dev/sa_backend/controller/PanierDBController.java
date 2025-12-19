@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import bel.dev.sa_backend.controller.InvitePanierController.AddItemResponse;
 import bel.dev.sa_backend.dto.PanierDTO;
 
 import bel.dev.sa_backend.service.PanierService;
@@ -54,7 +55,7 @@ public class PanierDBController {
     }
 
     // POST: ajouter/sauvegarder un item
-    @PostMapping
+    @PostMapping("{cartId}")
     public ResponseEntity<CartItemResponse> add(
             @PathVariable String cartId,
             @Valid @RequestBody CreateCartItemRequest request
@@ -63,6 +64,7 @@ public class PanierDBController {
         // Location vers la ressource de l'item
         return ResponseEntity.ok(created);
     }
+ 
 
     // PUT: mettre à jour quantité d’un item
     @PutMapping("/{itemId}")
@@ -84,6 +86,27 @@ public class PanierDBController {
         return ResponseEntity.noContent().build();
     }
 
+     // DELETE: supprimer un item du panier
+    @DeleteMapping("/item/{cartId}/{itemId}")
+    public ResponseEntity<Void> diminuerQantity(
+            @PathVariable String cartId,
+            @PathVariable String itemId
+    ) {
+        panierService.diminuerQantity(cartId, itemId);
+        return ResponseEntity.noContent().build();
+    }
+
+        // POST: ajouter/sauvegarder un item
+    @PostMapping("item/{cartId}/{itemId}")
+    public ResponseEntity<Void> increaseItem(
+            @PathVariable String cartId,
+            @PathVariable String itemId
+    ) {
+       panierService.increaseItem(cartId, itemId);
+        // Location vers la ressource de l'item
+        return ResponseEntity.ok().build();
+    }
+
     // DELETE: vider tout le panier
     @DeleteMapping("/{cartId}")
     public ResponseEntity<Void> clear(@PathVariable String cartId) {
@@ -98,7 +121,11 @@ public class PanierDBController {
             @Min(1) int quantity,
             @NotNull BigDecimal unitPrice
     ) {}
-
+    public record AddCartItemRequest(
+            @NotNull String itemId,
+            @Min(1) int quantity,
+            @NotNull BigDecimal unitPrice
+    ) {}
     public record UpdateCartItemRequest(@Min(1) int quantity) {}
 
     public record CartItemResponse(

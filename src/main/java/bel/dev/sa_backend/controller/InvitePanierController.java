@@ -76,6 +76,15 @@ public class InvitePanierController {
         this.invitePanierService.deleteAllItems(sessionId);
 
     }
+      // DELETE: supprimer un item du panier
+    @DeleteMapping("/items/decrease/{sessionId}/{id}")
+    public ResponseEntity<Void> diminuerQantity(
+            @PathVariable String sessionId,
+            @PathVariable String id
+    ) {
+        invitePanierService.diminuerQantity(sessionId, id, 1800);
+        return ResponseEntity.noContent().build();
+    }
 
     
    

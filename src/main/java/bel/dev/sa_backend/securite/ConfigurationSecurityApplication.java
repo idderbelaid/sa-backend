@@ -76,6 +76,7 @@ public class ConfigurationSecurityApplication {
                             .requestMatchers(HttpMethod.GET, "/guest-cart/items/*").permitAll()
                             .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/delete/*/*").permitAll()
                             .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/clearItems/*").permitAll()
+                            .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/decrease/*/*").permitAll()
                             .anyRequest().authenticated()
             )
             .sessionManagement(
