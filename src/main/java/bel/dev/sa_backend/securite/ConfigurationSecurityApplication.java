@@ -77,6 +77,9 @@ public class ConfigurationSecurityApplication {
                             .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/delete/*/*").permitAll()
                             .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/clearItems/*").permitAll()
                             .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/decrease/*/*").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/payments/create-payment-intent").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/address/me").authenticated()
+                            .requestMatchers(HttpMethod.PUT, "/api/address/*").authenticated()
                             .anyRequest().authenticated()
             )
             .sessionManagement(

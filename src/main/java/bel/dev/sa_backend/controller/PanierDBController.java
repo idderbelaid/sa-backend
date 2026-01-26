@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import bel.dev.sa_backend.controller.InvitePanierController.AddItemResponse;
+
 import bel.dev.sa_backend.dto.PanierDTO;
 
 import bel.dev.sa_backend.service.PanierService;

@@ -21,6 +21,7 @@ public class UtilisateurMapper {
         utilisateur.setId(dto.getId());
         utilisateur.setNom(dto.getNom());
         utilisateur.setPrenom(dto.getPrenom());
+        utilisateur.setTelephone(dto.getTelephone());
         utilisateur.setEmail(dto.getEmail());
         utilisateur.setPassword(dto.getPassword());
         
@@ -45,6 +46,7 @@ public class UtilisateurMapper {
         dto.setId(utilisateur.getId());
         dto.setNom(utilisateur.getNom());
         dto.setPrenom(utilisateur.getPrenom());
+        dto.setTelephone(utilisateur.getTelephone());
         dto.setEmail(utilisateur.getEmail());
         System.out.println("je pense que le problème vientd e ce qui suit " );
         dto.setRoles(utilisateur.getRoles().stream()

@@ -4,8 +4,6 @@ package bel.dev.sa_backend.repository;
 import java.util.List;
 import java.util.Optional;
 
-import java.util.stream.Stream;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
