@@ -1,24 +1,30 @@
-
 package bel.dev.sa_backend.service;
 
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import bel.dev.sa_backend.Enums.Category;
+import bel.dev.sa_backend.dto.PageResponse;
 import bel.dev.sa_backend.dto.ProduitDTO;
 import bel.dev.sa_backend.entities.Produit;
 import bel.dev.sa_backend.repository.ProduitRepository;
-import bel.dev.sa_backend.mapper.ProduitMapper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
+@ExtendWith(MockitoExtension.class)
 class ProduitServiceTest {
 
     @Mock
@@ -27,62 +33,166 @@ class ProduitServiceTest {
     @InjectMocks
     private ProduitService produitService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    // =========================
+    // ✅ TEST : rechercher()
+    // =========================
+    @Test
+    void rechercher_shouldReturnPagedProducts() {
+        // GIVEN
+        Produit produit = new Produit();
+        produit.setId("P001");
+        produit.setName("Ficus");
+        produit.setCategory(Category.CLASSIQUE);
+    
+
+        Page<Produit> page = new PageImpl<>(
+                List.of(produit),
+                PageRequest.of(0, 10),
+                1
+        );
+
+        when(produitRepository.findAll(ArgumentMatchers.<Specification<Produit>>any(),ArgumentMatchers.any(PageRequest.class)))
+                .thenReturn(page);
+
+        // WHEN
+        PageResponse<ProduitDTO> result =
+                produitService.rechercher("Ficus", "Plante", 0, 10, "name", "asc");
+
+        // THEN
+        assertThat(result).isNotNull();
+        assertThat(result.content()).hasSize(1);
+        assertThat(result.content().get(0).name()).isEqualTo("Ficus");
+        assertThat(result.totalElements()).isEqualTo(1);
+
+        verify(produitRepository).findAll(ArgumentMatchers.<Specification<Produit>>any(), ArgumentMatchers.any(PageRequest.class));
     }
 
+    // =========================
+    // ✅ TEST : getCategories()
+    // =========================
     @Test
-    void rechercher_shouldReturnEmptyList_whenRepositoryReturnsNull() {
-        // Arrange
-        when(produitRepository.findAll()).thenReturn(null);
+    void getCategories_shouldReturnDistinctCategories() {
+        // GIVEN
+        when(produitRepository.findDistinctCategories())
+                .thenReturn(List.of("Plante", "Fleur"));
 
-        // Act
-        List<ProduitDTO> result = produitService.rechercher();
+        // WHEN
+        List<String> categories = produitService.getCategories();
 
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(produitRepository, times(1)).findAll();
+        // THEN
+        assertThat(categories)
+                .containsExactly("Plante", "Fleur");
+
+        verify(produitRepository).findDistinctCategories();
     }
 
+    // =========================
+    // ✅ TEST : creer()
+    // =========================
     @Test
-    void rechercher_shouldReturnMappedDTOList_whenRepositoryReturnsProducts() {
-        // Arrange
-        Produit produit1 = new Produit();
-        produit1.setId_produit("p1");
-        produit1.setName("Monstera");
-        produit1.setPrice(BigDecimal.valueOf(12.0));
+    void creer_shouldGenerateIdAndSaveProduct() {
+        // GIVEN
+        Produit produit = new Produit();
+        produit.setName("Monstera");
 
-        Produit produit2 = new Produit();
-        produit2.setId_produit("p2");
-        produit2.setName("Ficus");
-        produit2.setPrice(BigDecimal.valueOf(15.0));
+        // WHEN
+        produitService.creer(produit);
 
-        when(produitRepository.findAll()).thenReturn(Arrays.asList(produit1, produit2));
+        // THEN
+        assertThat(produit.getId()).isNotNull();
+        assertThat(produit.getId()).hasSize(6);
 
-        // Act
-        List<ProduitDTO> result = produitService.rechercher();
-
-        // Assert
-        assertEquals(2, result.size());
-        assertEquals("Monstera", result.get(0).name());
-        assertEquals("Ficus", result.get(1).name());
-        verify(produitRepository, times(1)).findAll();
+        verify(produitRepository).save(produit);
     }
 
+    // =========================
+    // ✅ TEST : modifie()
+    // =========================
     @Test
-    void rechercher_shouldReturnEmptyList_whenRepositoryReturnsEmptyIterable() {
-        // Arrange
-        when(produitRepository.findAll()).thenReturn(Collections.emptyList());
+    void modifie_shouldUpdateProductFields() {
+        // GIVEN
+        Produit existing = new Produit();
+        existing.setId("P123");
+        existing.setName("Ancien nom");
+        existing.setLight(2);
+        existing.setWater(3);
 
-        // Act
-        List<ProduitDTO> result = produitService.rechercher();
+        
+        ProduitDTO dto = new ProduitDTO(
+            "P123",
+            "Nouveau nom",
+            Category.CLASSIQUE,
+            2,
+            3,
+            "", // ✅ String vide
+            5,
+            20.0,
+            "Ceci est une description de la plante"
+        );
 
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(produitRepository, times(1)).findAll();
+     
+
+        when(produitRepository.findById("P123"))
+                .thenReturn(Optional.of(existing));
+
+        // WHEN
+        produitService.modifie("P123", dto);
+
+        // THEN
+        assertThat(existing.getName()).isEqualTo("Nouveau nom");
+        assertThat(existing.getLight()).isEqualTo(2);
+        assertThat(existing.getWater()).isEqualTo(3);
+
+        verify(produitRepository).save(existing);
+    }
+
+    // =========================
+    // ✅ TEST : modifie() -> NOT FOUND
+    // =========================
+    @Test
+    void modifie_shouldThrowExceptionIfProductNotFound() {
+        // GIVEN
+        when(produitRepository.findById("404"))
+                .thenReturn(Optional.empty());
+
+        ProduitDTO dto = mock(ProduitDTO.class);
+
+        // THEN
+        assertThatThrownBy(() -> produitService.modifie("404", dto))
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessageContaining("Aucun produit");
+
+        verify(produitRepository, never()).save(any());
+    }
+
+    // =========================
+    // ✅ TEST : supprimer()
+    // =========================
+    @Test
+    void supprimer_shouldDeleteProduct() {
+        // GIVEN
+        Produit produit = new Produit();
+        produit.setId("P001");
+
+        when(produitRepository.findById("P001"))
+                .thenReturn(Optional.of(produit));
+
+        // WHEN
+        produitService.supprimer("P001");
+
+        // THEN
+        verify(produitRepository).delete(produit);
+    }
+
+    // =========================
+    // ✅ TEST : supprimer() -> NOT FOUND
+    // =========================
+    @Test
+    void supprimer_shouldThrowExceptionIfNotFound() {
+        when(produitRepository.findById("404"))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> produitService.supprimer("404"))
+                .isInstanceOf(UsernameNotFoundException.class);
     }
 }
-
