@@ -103,7 +103,7 @@ public class CommandeService {
             itemsCommande.add(itemNew);
         }
         order.setItems(itemsCommande);
-        
+
         //Enregistrer le paiement (simple pour l’instant)
         Paiement paiement = new Paiement();
         paiement.setAmount(totalCommande);
@@ -167,7 +167,8 @@ public class CommandeService {
 
 
 	public List<CommandeResponseDTO> retreive(String username) {
-		Utilisateur user = this.utilisateurRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+		Utilisateur user = this.utilisateurRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         List<Commande> commandes =  this.commandeRepository.findByUserInfo_Utilisateur_Id(user.getId());
         List<CommandeResponseDTO> response = new ArrayList<>();
         for(Commande cmd : commandes){
@@ -175,4 +176,18 @@ public class CommandeService {
         }
         return response;
 	}
+    public List<CommandeResponseDTO> adminRetreiveCommandes(String username) {
+        Utilisateur user = this.utilisateurRepository.findByEmail(username)
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        if(user.hasRole("ADMIN")){
+            Iterable<Commande> commandes =  this.commandeRepository.findAll();
+            List<CommandeResponseDTO> response = new ArrayList<>();
+            for(Commande cmd : commandes){
+                response.add(CommandeMapper.toCommandeResponseDTO(cmd));
+            }
+            return response;
+        }
+        return new ArrayList<>();
+
+    }
 }

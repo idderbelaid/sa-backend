@@ -46,7 +46,7 @@ public class CommandeController {
 
         return commandeService.creer(commande, null, sessionId);
     }
-    
+
     @GetMapping(path="retreive", produces="Application/Json")
     public List<CommandeResponseDTO> retreiveCommande( Principal principal) {
         if (principal == null) {
@@ -58,6 +58,18 @@ public class CommandeController {
 
         String username = principal.getName();
         return commandeService.retreive( username);
+    }
+    @GetMapping(path="admin/retreive", produces="Application/Json")
+    public List<CommandeResponseDTO> adminRetreiveCommandes( Principal principal) {
+         if (principal == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, 
+                    "Authentification requise pour accéder à cette ressource."
+            );
+        }
+
+        String username = principal.getName();
+        return commandeService.adminRetreiveCommandes( username);
     }
 
     
