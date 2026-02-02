@@ -99,8 +99,8 @@ class ProduitServiceTest {
         produitService.creer(produit);
 
         // THEN
-        assertThat(produit.getId()).isNotNull();
-        assertThat(produit.getId()).hasSize(6);
+        assertThat(result.content().get(0).id()).isNotNull();
+        assertThat(result.content().get(0).id()).hasSize(6);
 
         verify(produitRepository).save(produit);
     }
@@ -112,7 +112,7 @@ class ProduitServiceTest {
     void modifie_shouldUpdateProductFields() {
         // GIVEN
         Produit existing = new Produit();
-        existing.setId("P123");
+        ReflectionTestUtils.setField(existing, "id", "P123");        
         existing.setName("Ancien nom");
         existing.setLight(2);
         existing.setWater(3);
