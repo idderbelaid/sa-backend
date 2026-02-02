@@ -43,7 +43,7 @@ public class PanierMapper {
      */
     public static PanierItemDTO toItemDto(PanierItem item) {
         return new PanierItemDTO(
-            item.getId().toString(), item.getProduit().getName(), item.getQuantity(), item.getUnitPrice()
+            item.getId().toString(), item.getProduit().getId(), item.getProduit().getName(), item.getQuantity(), item.getUnitPrice()
         );
 
        
