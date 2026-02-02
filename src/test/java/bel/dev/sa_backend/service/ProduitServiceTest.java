@@ -172,7 +172,8 @@ class ProduitServiceTest {
     void supprimer_shouldDeleteProduct() {
         // GIVEN
         Produit produit = new Produit();
-        produit.setId("P001");
+
+        ReflectionTestUtils.setField(produit, "id", "P001");
 
         when(produitRepository.findById("P001"))
                 .thenReturn(Optional.of(produit));
