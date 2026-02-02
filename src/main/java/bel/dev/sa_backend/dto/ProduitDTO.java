@@ -16,4 +16,9 @@ public record ProduitDTO(
     BigDecimal price,
     String description
     ) {
+
+    public ProduitDTO(String id, String name, Category category, int light, int water, String cover, int quantity, double price,
+            String description) {
+        this(id, name, category, light, water, cover, quantity, BigDecimal.valueOf(price), description);
+    }
 } 
