@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import bel.dev.sa_backend.Enums.Category;
 import bel.dev.sa_backend.dto.PageResponse;
@@ -40,8 +41,7 @@ class ProduitServiceTest {
     void rechercher_shouldReturnPagedProducts() {
         // GIVEN
         Produit produit = new Produit();
-        produit.setId("P001");
-        produit.setName("Ficus");
+        ReflectionTestUtils.setField(produit, "id", "P001"); // au lieu de produit.setId("P001")        produit.setName("Ficus");
         produit.setCategory(Category.CLASSIQUE);
     
 
@@ -51,7 +51,7 @@ class ProduitServiceTest {
                 1
         );
 
-        when(produitRepository.findAll(ArgumentMatchers.<Specification<Produit>>any(),ArgumentMatchers.any(PageRequest.class)))
+        when(produitRepository.findAll(org.mockito.ArgumentMatchers.<Specification<Produit>>any(),any(PageRequest.class)))
                 .thenReturn(page);
 
         // WHEN
@@ -64,7 +64,7 @@ class ProduitServiceTest {
         assertThat(result.content().get(0).name()).isEqualTo("Ficus");
         assertThat(result.totalElements()).isEqualTo(1);
 
-        verify(produitRepository).findAll(ArgumentMatchers.<Specification<Produit>>any(), ArgumentMatchers.any(PageRequest.class));
+        verify(produitRepository).findAll(org.mockito.ArgumentMatchers.<Specification<Produit>>any(), any(PageRequest.class));
     }
 
     // =========================
@@ -126,7 +126,7 @@ class ProduitServiceTest {
             3,
             "", // ✅ String vide
             5,
-            20.0,
+            java.math.BigDecimal.valueOf(20.0),
             "Ceci est une description de la plante"
         );
 
