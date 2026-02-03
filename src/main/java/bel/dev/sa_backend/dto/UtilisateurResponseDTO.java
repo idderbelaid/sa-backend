@@ -22,6 +22,7 @@ public class UtilisateurResponseDTO {
     private String nom;
     private String prenom;
     private String email;
+    private String telephone;
     private Set<TypeDeRole> roles = new HashSet<>();
 
    

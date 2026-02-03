@@ -30,6 +30,9 @@ public class UtilisateurCreationDTO {
     @Email(message = "L'email doit être valide")
     @NotBlank(message = "L'email est obligatoire")
     private String email;
+    
+    @NotBlank(message = "Le téléphone est obligatoire")
+    private String telephone;
 
     @Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères")
     @NotBlank(message = "Le mot de passe est obligatoire")

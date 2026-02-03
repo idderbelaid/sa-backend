@@ -102,7 +102,7 @@ public class JwtService {
         log.info("generateJWT en cours... ");
         final long currentTime= System.currentTimeMillis();
         log.info("currentTime ok... " + currentTime);
-        final long expirationTime  = currentTime + 60*1000;
+        final long expirationTime  = currentTime + 8L * 60 * 60 * 1000;
         log.info("expirationTime ok... " + expirationTime);
         final Map<String, Object> claims = Map.of(
             "nom", user.getNom(),
@@ -112,7 +112,7 @@ public class JwtService {
         log.info("claims ok... ");
         final String bearerToken  = Jwts.builder()
             .setIssuedAt(new Date(currentTime))
-            .setExpiration(new Date(currentTime + 15 * 60 * 1000))
+            .setExpiration(new Date(expirationTime))
             .setSubject(user.getEmail())
             .setClaims(claims)
             .signWith( SignatureAlgorithm.HS256, getKey())
