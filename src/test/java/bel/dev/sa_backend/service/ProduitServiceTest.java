@@ -49,7 +49,7 @@ class ProduitServiceTest {
     void setUp() {
         // Initialisation des données de test
         produit1 = new Produit();
-        produit1.setId_produit("PROD01");
+        produit1.setId("PROD01");
         produit1.setName("Rose");
         produit1.setCategory(Category.CLASSIQUE);
         produit1.setLight(1);
@@ -60,7 +60,7 @@ class ProduitServiceTest {
         produit1.setDescription("Belle rose rouge");
 
         produit2 = new Produit();
-        produit2.setId_produit("PROD02");
+        produit2.setId("PROD02");
         produit2.setName("Tulipe");
         produit2.setCategory(Category.FLEURIE);
         produit2.setLight(2);
@@ -213,8 +213,8 @@ class ProduitServiceTest {
         produitService.creer(nouveauProduit);
 
         // Assert
-        assertNotNull(nouveauProduit.getId_produit());
-        assertEquals(6, nouveauProduit.getId_produit().length());
+        assertNotNull(nouveauProduit.getId());
+        assertEquals(6, nouveauProduit.getId().length());
         verify(produitRepository, times(1)).save(nouveauProduit);
     }
 
@@ -356,9 +356,9 @@ class ProduitServiceTest {
         produitService.creer(produit4);
 
         // Assert
-        assertNotNull(produit3.getId_produit());
-        assertNotNull(produit4.getId_produit());
-        assertNotEquals(produit3.getId_produit(), produit4.getId_produit());
+        assertNotNull(produit3.getId());
+        assertNotNull(produit4.getId());
+        assertNotEquals(produit3.getId(), produit4.getId());
         verify(produitRepository, times(2)).save(any(Produit.class));
     }
 }
