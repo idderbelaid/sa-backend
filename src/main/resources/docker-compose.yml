@@ -1,12 +1,25 @@
 services:
-  db:
+  local-db:
     image: mariadb:10.7
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: root
+      MARIADB_ROOT_PASSWORD: local-root
     ports:
       - 3307:3306
-
+  dev-db:
+    image: mariadb:10.7
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: dev-root
+    ports:
+      - 3308:3306
+  prod-db:
+    image: mariadb:10.7
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: prod-root
+    ports:
+      - 3309:3306
   adminer:
     image: adminer
     restart: always
