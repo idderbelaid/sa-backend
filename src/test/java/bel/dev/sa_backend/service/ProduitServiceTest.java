@@ -41,8 +41,10 @@ class ProduitServiceTest {
     void rechercher_shouldReturnPagedProducts() {
         // GIVEN
         Produit produit = new Produit();
-        ReflectionTestUtils.setField(produit, "id", "P001"); // au lieu de produit.setId("P001")        produit.setName("Ficus");
-        produit.setCategory(Category.CLASSIQUE);
+        ReflectionTestUtils.setField(produit, "id", "P001");
+        ReflectionTestUtils.setField(produit, "name", "Ficus");
+        ReflectionTestUtils.setField(produit, "category", Category.CLASSIQUE);
+
     
 
         Page<Produit> page = new PageImpl<>(
@@ -51,7 +53,7 @@ class ProduitServiceTest {
                 1
         );
 
-        when(produitRepository.findAll(org.mockito.ArgumentMatchers.<Specification<Produit>>any(),any(PageRequest.class)))
+        when(produitRepository.findAll(org.mockito.ArgumentMatchers.<Specification<Produit>>any(),any(Pageable.class)))
                 .thenReturn(page);
 
         // WHEN
@@ -64,7 +66,7 @@ class ProduitServiceTest {
         assertThat(result.content().get(0).name()).isEqualTo("Ficus");
         assertThat(result.totalElements()).isEqualTo(1);
 
-        verify(produitRepository).findAll(org.mockito.ArgumentMatchers.<Specification<Produit>>any(), any(PageRequest.class));
+        verify(produitRepository).findAll(org.mockito.ArgumentMatchers.<Specification<Produit>>any(), any(Pageable.class));
     }
 
     // =========================
@@ -89,21 +91,22 @@ class ProduitServiceTest {
     // =========================
     // ✅ TEST : creer()
     // =========================
+    
     @Test
     void creer_shouldGenerateIdAndSaveProduct() {
-        // GIVEN
         Produit produit = new Produit();
         produit.setName("Monstera");
-
-        // WHEN
+    
         produitService.creer(produit);
-
-        // THEN
-        assertThat(result.content().get(0).id()).isNotNull();
-        assertThat(result.content().get(0).id()).hasSize(6);
-
+    
+        Object id = ReflectionTestUtils.getField(produit, "id");
+        assertThat(id).isNotNull();
+        assertThat(id).isInstanceOf(String.class);
+        assertThat((String) id).hasSize(6);
+    
         verify(produitRepository).save(produit);
     }
+
 
     // =========================
     // ✅ TEST : modifie()
