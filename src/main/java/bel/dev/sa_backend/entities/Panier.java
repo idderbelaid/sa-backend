@@ -33,11 +33,11 @@ public class Panier {
     
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    private UUID id = UUID.randomUUID();
+    private String id = UUID.randomUUID().toString();
 
     
     @Column(name = "user_id")
-    private UUID userId; // NULL pour les invités
+    private String userId; // NULL pour les invités
 
     
     @Enumerated(EnumType.STRING)

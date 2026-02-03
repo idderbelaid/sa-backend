@@ -9,7 +9,7 @@ public class ProduitMapper {
 
      public static ProduitDTO toProduitDTO(Produit produit) {
         return new ProduitDTO(
-            produit.getId_produit(), 
+            produit.getId(), 
             produit.getName(), 
             produit.getCategory(), 
             produit.getLight(), 

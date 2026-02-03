@@ -1,10 +1,7 @@
 package bel.dev.sa_backend.service;
 
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,12 +9,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import bel.dev.sa_backend.Specification.ProduitSpecifications;
 import bel.dev.sa_backend.dto.PageResponse;
 import bel.dev.sa_backend.dto.ProduitDTO;
 import bel.dev.sa_backend.entities.Produit;
-import bel.dev.sa_backend.entities.Utilisateur;
 import bel.dev.sa_backend.repository.ProduitRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,17 +64,12 @@ public class ProduitService {
             produits.isFirst(),
             produits.isLast()
         );
-
-       
-           
-        
     }
-
-    
+  
     private ProduitDTO toDTO(Produit produit) {
         return new ProduitDTO(  
-            produit.getId_produit(), 
-            produit.getName(), 
+            produit.getId(), 
+            produit.getName(),         
             produit.getCategory(), 
             produit.getLight(), 
             produit.getWater(), 
@@ -100,7 +90,7 @@ public class ProduitService {
         System.out.println("voici le produit : " + produit.getCategory());
         String random = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
         System.out.println("random : " + random);
-        produit.setId_produit(random);
+        produit.setId(random);
         this.produitRepository.save(produit);
     }
 
