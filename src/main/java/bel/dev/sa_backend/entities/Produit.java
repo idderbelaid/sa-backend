@@ -26,7 +26,9 @@ public class Produit {
 
     @Id
     @Column(length = 19)
-    private String id_produit;
+    private String id;
+
+    
     private String name;
 
     @Enumerated(EnumType.STRING)

@@ -1,8 +1,9 @@
 package bel.dev.sa_backend.dto;
 
 import java.math.BigDecimal;
-import java.util.Map;
+import java.util.List;
 
-public record GuestPanierDTO(Map<String, PanierItemDTO> items, BigDecimal total) {
+
+public record GuestPanierDTO(List<PanierItemDTO> items, BigDecimal total) {
 
 }

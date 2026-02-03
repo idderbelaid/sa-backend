@@ -74,7 +74,9 @@ public class ConfigurationSecurityApplication {
 
                             // Ajouts suivants (avec sessionId)
                             .requestMatchers(HttpMethod.POST, "/guest-cart/*/items").permitAll()
-
+                            .requestMatchers(HttpMethod.GET, "/guest-cart/items/*").permitAll()
+                            .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/delete/*/*").permitAll()
+                            .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/clearItems/*").permitAll()
                             .anyRequest().authenticated()
             )
             .sessionManagement(
