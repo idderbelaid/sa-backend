@@ -28,6 +28,7 @@ public class ConfigurationSecurityApplication {
     
 
     private final JwtFilter jwtFilter;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
   
 
 

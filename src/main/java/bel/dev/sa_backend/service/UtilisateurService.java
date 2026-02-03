@@ -28,6 +28,7 @@ import bel.dev.sa_backend.mapper.UtilisateurMapper;
 import bel.dev.sa_backend.repository.RoleRepository;
 import bel.dev.sa_backend.repository.UtilisateurRepository;
 import bel.dev.sa_backend.service.rabbitMQ.KafkaProducer;
+import bel.dev.sa_backend.service.rabbitMQ.RabbitMQService;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;

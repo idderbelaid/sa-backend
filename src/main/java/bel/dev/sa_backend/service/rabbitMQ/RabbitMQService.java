@@ -19,6 +19,7 @@ public class RabbitMQService {
 
     private  RabbitTemplate template;
     private  String exchangeName ;
+    private String routineKey;
    
 
     public RabbitMQService(RabbitTemplate template, @Value("${application.exchange.user.name}") String exchangeName, @Value("${application.exchange.user.routing-key}") String routineKey) {
