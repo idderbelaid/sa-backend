@@ -18,7 +18,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import bel.dev.sa_backend.dto.UtilisateurResponseDTO;
-
+import bel.dev.sa_backend.entities.Utilisateur;
 
 
 

@@ -16,4 +16,6 @@ public record ProduitDTO(
     BigDecimal price,
     String description
     ) {
+
+    
 } 

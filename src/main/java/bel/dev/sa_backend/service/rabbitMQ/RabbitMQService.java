@@ -2,8 +2,7 @@ package bel.dev.sa_backend.service.rabbitMQ;
 
 import java.util.Map;
 
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageProperties;
+
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,8 @@ public class RabbitMQService {
 
     private  RabbitTemplate template;
     private  String exchangeName ;
-    private  String routineKey;
+    private String routineKey;
+   
 
     public RabbitMQService(RabbitTemplate template, @Value("${application.exchange.user.name}") String exchangeName, @Value("${application.exchange.user.routing-key}") String routineKey) {
         this.template = template;

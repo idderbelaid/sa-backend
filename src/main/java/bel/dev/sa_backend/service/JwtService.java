@@ -26,7 +26,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,7 @@ public class JwtService {
     private final String BEARER = "bearer";
     private final String REFRESH = "refresh";
     private UtilisateurService utilisateurService;
-    private RefreshTokenRepository refreshTokenRepository;
+    
     
     public Map<String, String> genererToken(String username) {
 
