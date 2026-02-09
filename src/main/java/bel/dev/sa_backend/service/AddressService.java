@@ -31,13 +31,13 @@ public class AddressService {
         
         Utilisateur user = this.utilisateurRepository.findByEmail(userId).
             orElseThrow(()-> new UsernameNotFoundException("Aucun utilisateur à cet identifiant"));
-
+        UtilisateurResponseDTO util = UtilisateurMapper.toResponseDTO(user);
+        ProfileDTO profile = new ProfileDTO(util, null);
         Address adr = user.getAddresses().stream()
             .filter(Address::isDefault)
             .findFirst()
             .orElse(null);
         if(adr!= null){
-            
             AddressDTO dto = new AddressDTO(
                 adr.getId(),
                 adr.getNumeroEtvoie(),
@@ -46,12 +46,10 @@ public class AddressService {
                 adr.getCodePostal(),
                 adr.getPays()
             );
-            UtilisateurResponseDTO util = UtilisateurMapper.toResponseDTO(user);
-            ProfileDTO profile = new ProfileDTO(util, dto);
-
-            return profile;
+            profile.setAddress(dto);
+            
         }
-        return null;
+        return profile;
     }
 
 

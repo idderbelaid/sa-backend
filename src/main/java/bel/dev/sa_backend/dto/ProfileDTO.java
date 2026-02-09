@@ -1,8 +1,15 @@
 package bel.dev.sa_backend.dto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public record ProfileDTO(
-    UtilisateurResponseDTO utilisateur,
-    AddressDTO address
-) {
-    
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProfileDTO{
+    UtilisateurResponseDTO utilisateur;
+    AddressDTO address;
 }

@@ -51,11 +51,11 @@ public class InvitePanierService {
             System.out.println("existing quantity: " +existing);
             int newQty = existing.amount() + amount;
             System.out.println("new quantity: " +newQty);
-            items.set(idx, new PanierItemDTO(id, produit.getName(), newQty, existing.price()));
+            items.set(idx, new PanierItemDTO(id,produit.getId(), produit.getName(), newQty, existing.price()));
 
 
         } else {
-            items.add(new PanierItemDTO(id, produit.getName(), amount, price));
+            items.add(new PanierItemDTO(id,produit.getId(), produit.getName(), amount, price));
         }
         BigDecimal total = computeTotal(items);
         System.out.println("total: " +total);
@@ -155,7 +155,7 @@ public class InvitePanierService {
                 items.remove(idx);
             }
             else
-            items.set(idx, new PanierItemDTO(id, produit.getName(), newQty, existing.price()));
+            items.set(idx, new PanierItemDTO(id, produit.getId(),produit.getName(), newQty, existing.price()));
         }else{
             throw new RuntimeException("Produit introuvable dans le panier");
         }

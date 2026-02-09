@@ -79,4 +79,10 @@ public class Utilisateur implements UserDetails{
        return this.email;
     }
 
+
+   
+    public boolean hasRole(String roleName) {
+        return roles.stream().anyMatch(role -> role.getLibelle().name().equals(roleName));
+    }   
+
 }

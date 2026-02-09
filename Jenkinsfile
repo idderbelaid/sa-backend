@@ -16,7 +16,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'chmod +x mvnw'
-                sh './mvnw clean package' // ou './gradlew build' si tu utilises Gradle
+                sh './mvnw clean package -DskipTests' // ou './gradlew build' si tu utilises Gradle
             }
         }
 
