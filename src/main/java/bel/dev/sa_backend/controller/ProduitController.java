@@ -38,15 +38,13 @@ public class ProduitController {
             @RequestParam(defaultValue = "") String search,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-     
-            @RequestParam(required = false) String sortField,
-            @RequestParam(required = false) String sortDirection,
+            @RequestParam(required = false) String sort,
             @RequestParam(required = false) String category
 
 
     ){
-                
-        return this.produitService.rechercher(search, category, page, size, sortField, sortDirection);
+        System.out.println("sort ..............."+ sort);
+        return this.produitService.rechercher(search, category, page, size, sort);
     }
     
     @GetMapping(path = "categories")

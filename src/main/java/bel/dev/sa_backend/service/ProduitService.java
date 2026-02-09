@@ -26,17 +26,16 @@ public class ProduitService {
 
     private final ProduitRepository produitRepository;
 
-    public PageResponse<ProduitDTO>  rechercher(String search, String category,int page, int size, String sortField, String sortDirection) {
-        Sort.Direction direction = 
-        sortDirection != null
-         && sortDirection.equalsIgnoreCase("desc") 
-        ? Sort.Direction.DESC : Sort.Direction.ASC;
+    public PageResponse<ProduitDTO>  rechercher(String search, String category,int page, int size, String sort) {
+       
+        System.out.println("sort ..............."+ sort);
         
-        
-        Pageable pageable =
-            (sortField == null || sortField.isBlank())
-                ? PageRequest.of(page, size)  // pas de tri
-                : PageRequest.of(page, size, Sort.by(direction, sortField));
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (sort != null && !sort.isBlank()) {
+            pageable = PageRequest.of(page, size, buildSort(sort));
+        }
+     
 
         
         // Construire la Specification dynamique
@@ -136,6 +135,18 @@ public class ProduitService {
         if(product != null)
             this.produitRepository.delete(product);
     }
+
+    
+    private Sort buildSort(String sort) {
+        return switch (sort) {
+            case "PRICE_ASC"  -> Sort.by(Sort.Direction.ASC, "price");
+            case "PRICE_DESC" -> Sort.by(Sort.Direction.DESC, "price");
+            case "NAME_ASC"   -> Sort.by(Sort.Direction.ASC, "name");
+            case "NAME_DESC"  -> Sort.by(Sort.Direction.DESC, "name");
+            default -> Sort.unsorted();
+        };
+    }
+
 
    
 
