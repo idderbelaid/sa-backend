@@ -13,7 +13,7 @@ import bel.dev.sa_backend.repository.RoleRepository;
 
 public class UtilisateurMapper {
 
-    private RoleRepository rolerRepository;
+
 
     // Mapping du DTO de création vers l'entité
     public static Utilisateur toEntity(UtilisateurCreationDTO dto) {

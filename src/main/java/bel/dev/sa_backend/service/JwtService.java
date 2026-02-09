@@ -45,7 +45,7 @@ public class JwtService {
     private final String BEARER = "bearer";
     private final String REFRESH = "refresh";
     private UtilisateurService utilisateurService;
-    private RefreshTokenRepository refreshTokenRepository;
+    
     
     public Map<String, String> genererToken(String username) {
 

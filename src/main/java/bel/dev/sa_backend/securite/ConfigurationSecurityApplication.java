@@ -28,7 +28,8 @@ public class ConfigurationSecurityApplication {
     
 
     private final JwtFilter jwtFilter;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+  
 
 
     public ConfigurationSecurityApplication(JwtFilter jwtFilter,BCryptPasswordEncoder bCryptPasswordEncoder ){

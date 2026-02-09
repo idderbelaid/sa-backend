@@ -1,6 +1,6 @@
 package bel.dev.sa_backend.entities;
 
-import java.sql.Date;
+
 import java.time.Instant;
 
 import jakarta.persistence.Table;
@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 
 @Getter
 @Builder
