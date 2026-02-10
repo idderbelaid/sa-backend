@@ -68,7 +68,7 @@ public class ConfigurationSecurityApplication {
                             .requestMatchers(HttpMethod.POST, "/produit/creer" ).permitAll()
                             .requestMatchers(HttpMethod.PUT, "/produit/update/*" ).permitAll()
                             .requestMatchers(HttpMethod.DELETE, "/produit/delete/*" ).permitAll()
-                           
+                           .requestMatchers(HttpMethod.GET, "/produit/info/*" ).permitAll()
                             // Premier ajout (pas de sessionId dans l’URL)
                             .requestMatchers(HttpMethod.POST, "/guest-cart/items").permitAll()
 

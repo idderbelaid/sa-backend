@@ -43,7 +43,7 @@ public class ProduitController {
 
 
     ){
-        System.out.println("sort ..............."+ sort);
+
         return this.produitService.rechercher(search, category, page, size, sort);
     }
     
@@ -74,6 +74,13 @@ public class ProduitController {
         produitService.supprimer(id);
       
     }
+
+    @GetMapping(path = "info/{id}")
+    public ProduitDTO info(@PathVariable("id") String id) {
+        System.out.println("identifiant : "+id);
+        return produitService.infoById(id);
+    }
+
 
 
 }

@@ -147,6 +147,11 @@ public class ProduitService {
         };
     }
 
+    public ProduitDTO infoById(String id){
+        Produit produit = this.produitRepository.findById(id).orElseThrow( () -> new UsernameNotFoundException("Aucun produit avec cet identifiant"));
+        return this.toDTO(produit);
+    }
+
 
    
 
