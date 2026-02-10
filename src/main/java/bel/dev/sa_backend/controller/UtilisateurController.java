@@ -28,6 +28,8 @@ import bel.dev.sa_backend.dto.AuthentificationDTO;
 
 import bel.dev.sa_backend.dto.UtilisateurCreationDTO;
 import bel.dev.sa_backend.dto.UtilisateurResponseDTO;
+import bel.dev.sa_backend.entities.Utilisateur;
+import bel.dev.sa_backend.mapper.UtilisateurMapper;
 import bel.dev.sa_backend.service.JwtService;
 import bel.dev.sa_backend.service.UtilisateurService;
 import bel.dev.sa_backend.service.ValidationService;
@@ -115,6 +117,14 @@ public class UtilisateurController {
     public @ResponseBody List<UtilisateurResponseDTO> liste(){
         return this.utilisateurService.liste();
     }
+    
+    @GetMapping("/auth/me")
+    public ResponseEntity<?> me(Authentication auth) {
+        Utilisateur user = (Utilisateur) auth.getPrincipal();
+        UtilisateurResponseDTO userDTO = UtilisateurMapper.toResponseDTO(user);
+        return ResponseEntity.ok(userDTO);
+    }
+
 
     
 
