@@ -20,4 +20,8 @@ public class CommandeInviteRequest {
     private ItemCommandeDTO[] itemsCommande;
     private AddressDTO AdresseShipping;
     private PaiementDTO paiement;
+    private long deliveryPrice;
+    private long sousTotalPrice;
+    private long totalPrice;
 }
+

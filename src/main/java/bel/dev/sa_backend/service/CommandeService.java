@@ -11,11 +11,14 @@ import javax.validation.Valid;
 
 import org.springframework.stereotype.Service;
 
+import bel.dev.sa_backend.Enums.CommandeStatus;
 import bel.dev.sa_backend.Enums.PaiementStatus;
 import bel.dev.sa_backend.controller.requestDTO.CommandeInviteRequest;
 import bel.dev.sa_backend.controller.requestDTO.InfoUserInviteDTO;
 import bel.dev.sa_backend.controller.requestDTO.ItemCommandeDTO;
 import bel.dev.sa_backend.dto.AddressDTO;
+import bel.dev.sa_backend.dto.AddressResponseDTO;
+import bel.dev.sa_backend.dto.CommandeLivraisonResponseDTO;
 import bel.dev.sa_backend.dto.CommandeResponseDTO;
 import bel.dev.sa_backend.entities.Commande;
 import bel.dev.sa_backend.entities.CommandeItem;
@@ -26,6 +29,7 @@ import bel.dev.sa_backend.entities.Produit;
 import bel.dev.sa_backend.entities.Utilisateur;
 import bel.dev.sa_backend.mapper.CommandeMapper;
 import bel.dev.sa_backend.repository.CommandeRepository;
+import bel.dev.sa_backend.repository.CommandeUserInfoRepository;
 import bel.dev.sa_backend.repository.PanierRepository;
 import bel.dev.sa_backend.repository.ProduitRepository;
 import bel.dev.sa_backend.repository.UtilisateurRepository;
@@ -38,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class CommandeService {
+public class CommandeService{
 
     private UtilisateurRepository utilisateurRepository;
     private ProduitRepository produitRepository;
@@ -46,6 +50,7 @@ public class CommandeService {
     private PanierService panierService;
     private InvitePanierService invitePanierService;
     private PanierRepository panierRepository;
+    private CommandeUserInfoRepository commandeUserInfoRepository;
 
 
     public CommandeResponseDTO creer(CommandeInviteRequest commande, @Nullable String username, @Nullable String sessionId){
@@ -65,6 +70,21 @@ public class CommandeService {
         user_info.setEmail(utilisateur.getEmail());
         user_info.setTelephone(utilisateur.getTelephone());
 
+
+
+        //Verficiation de la livraison price.
+        if(commande.getDeliveryPrice() < 0){
+            throw new RuntimeException("Le prix de la livraion ne peut pas être négatif");
+        }else{
+            //logique pour vérifier le prix de la livraison selon l'adresse de shipping et le moyen de livraison choisi
+            //pour l'instant on accepte le prix envoyé par le client
+        }
+        if(commande.getSousTotalPrice()<0){
+            throw new RuntimeException("Le prix de sous total ne peut pas être négatif");
+        }
+         if(commande.getTotalPrice() < 0){
+            throw new RuntimeException("Le prix de total ne peut pas être négatif");
+        }
         //enregistrer la commande
 
         Commande order = new Commande();
@@ -91,22 +111,19 @@ public class CommandeService {
             // TVA simple (si tu n’en as pas encore)
             itemNew.setTaxRate(BigDecimal.ZERO);
             itemNew.setUnitTaxAmount(0L);
-            System.out.println("Calcul du total de la ligne");
-            System.out.println("itemNew.getQuantity() : " + itemNew.getQuantity());
-            System.out.println("itemNew.getUnitPriceExclTax() : " + itemNew.getUnitPriceExclTax());
+    
             Long lineTotal = itemNew.getUnitPriceExclTax() * itemNew.getQuantity();
-            System.out.println("lineTotal : " + lineTotal);
             itemNew.setLineTotalInclTax(lineTotal);
             itemNew.setOrder(order); // Lien vers la commande
             totalCommande += lineTotal;
-            System.out.println("montant de la commande "+ totalCommande);
+            
             itemsCommande.add(itemNew);
         }
         order.setItems(itemsCommande);
 
         //Enregistrer le paiement (simple pour l’instant)
         Paiement paiement = new Paiement();
-        paiement.setAmount(totalCommande);
+        paiement.setAmount(totalCommande + commande.getDeliveryPrice());
         paiement.setCurrency("EUR");
         paiement.setProvider("Stripe");
         paiement.setMethod("CARD");
@@ -123,9 +140,9 @@ public class CommandeService {
         user_info.setVille(addressShipping.ville());
         user_info.setCodePostal(addressShipping.codePostal());
         user_info.setPays(addressShipping.pays());
-
+        order.setSous_total(totalCommande);
         order.attachUserInfo(user_info);
-        order.setMontantTotal(totalCommande);
+        order.setMontantTotal(totalCommande + commande.getDeliveryPrice());
         order.setCreatedAt(java.time.Instant.now());
         order.setUpdatedAt(java.time.Instant.now());
         order.setPlacedAt(java.time.Instant.now());
@@ -189,5 +206,74 @@ public class CommandeService {
         }
         return new ArrayList<>();
 
+    }
+
+    public CommandeResponseDTO getCommandeById(String username, UUID id){
+        Utilisateur user = this.utilisateurRepository.findByEmail(username)
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        if(user.hasRole("ADMIN")){
+            Commande commande = this.commandeRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
+            return CommandeMapper.toCommandeResponseDTO(commande);
+        }
+        return new CommandeResponseDTO();
+    }
+
+
+
+    public CommandeResponseDTO updateCommandeStatus(String username, UUID uuid, CommandeStatus status) {
+        Utilisateur user = this.utilisateurRepository.findByEmail(username)
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        if(user.hasRole("ADMIN")){
+            Commande commande = this.commandeRepository.findById(uuid)
+                                .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
+            commande.setStatus(status);
+            Commande updateCommande = this.commandeRepository.save(commande);
+            return CommandeMapper.toCommandeResponseDTO(updateCommande);
+        }
+        return null;
+    }
+
+
+
+    public CommandeLivraisonResponseDTO getUserCommandeById(String username, UUID uuid) {
+        Utilisateur user = this.utilisateurRepository.findByEmail(username)
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        Commande commande = this.commandeRepository.findById(uuid)
+                            .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
+
+        CommandeUserInfo orderInfo = this.commandeUserInfoRepository.getCommandeUserInfoByCommande(commande);
+        AddressResponseDTO address = this.extraireAddress(orderInfo);
+        CommandeResponseDTO orderDTO = CommandeMapper.toCommandeResponseDTO(commande); 
+        return new CommandeLivraisonResponseDTO(orderDTO, address);
+        
+    }
+
+
+
+    public CommandeResponseDTO cancelUserCommande(String username, UUID uuid) {
+        Utilisateur user = this.utilisateurRepository.findByEmail(username)
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        
+        Commande commande = this.commandeRepository.findById(uuid)
+                                .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
+        commande.setStatus(CommandeStatus.CANCELLED);
+        Commande updateCommande = this.commandeRepository.save(commande);
+        return CommandeMapper.toCommandeResponseDTO(updateCommande);
+        
+       
+    }
+
+    public AddressResponseDTO extraireAddress(CommandeUserInfo cui){
+        AddressResponseDTO address = new AddressResponseDTO(); 
+        if(cui != null){
+            address.setNumeroEtvoie(cui.getNumeroEtvoie());
+            if(cui.getComplementAdresse() != null)
+                address.setComplementAddress(cui.getComplementAdresse());
+            address.setCodePostal(cui.getCodePostal());
+            address.setVille(cui.getVille());
+            address.setPays(cui.getPays());
+        }
+        return address;
     }
 }

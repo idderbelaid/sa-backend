@@ -296,9 +296,11 @@ public class PanierService {
         PanierItem item = panierItemRepository.findById(itemId)
                 .filter(ci -> ci.getPanier().getId().equals(cartId))
                 .orElseThrow(() -> new CartItemNotFoundException(itemId, cartId));
+        System.out.println("currentQty: " + item.getQuantity());
         int currentQty = item.getQuantity();
         if (currentQty > 1) {
             item.setQuantity(currentQty - 1);
+            System.out.println("je diminue la qty, après modification: "+item.getQuantity());
             panierItemRepository.save(item);
         } else {
             panierItemRepository.delete(item);
@@ -309,6 +311,7 @@ public class PanierService {
          PanierItem item = panierItemRepository.findById(itemId)
                 .filter(ci -> ci.getPanier().getId().equals(cartId))
                 .orElseThrow(() -> new CartItemNotFoundException(itemId, cartId));
+        System.out.println("currentQty: " + item.getQuantity());
         int currentQty = item.getQuantity();
         System.out.println("currentQty : " + currentQty);
         item.setQuantity(currentQty +1);

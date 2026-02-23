@@ -32,8 +32,7 @@ import reactor.core.publisher.Sinks.One;
 @NoArgsConstructor
 @Entity
 @Table(name = "commande", indexes = {
-    @Index(name = "ux_numero_commande", columnList = "numeroCommande", unique = true),
-    @Index(name = "ix_commande_user", columnList = "userId")
+    @Index(name = "ux_numero_commande", columnList = "numeroCommande", unique = true)
 })
 
 public class Commande {
@@ -62,6 +61,7 @@ public class Commande {
     private Instant updatedAt;
     private Instant placedAt;
 
+    private Long sous_total;
     private Long montantTotal; // soit le total de la commande en centimes
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

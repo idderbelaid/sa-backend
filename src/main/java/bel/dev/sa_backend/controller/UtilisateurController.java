@@ -118,7 +118,7 @@ public class UtilisateurController {
         return this.utilisateurService.liste();
     }
     
-    @GetMapping("/auth/me")
+    @GetMapping(path = "/auth/me")
     public ResponseEntity<?> me(Authentication auth) {
         Utilisateur user = (Utilisateur) auth.getPrincipal();
         UtilisateurResponseDTO userDTO = UtilisateurMapper.toResponseDTO(user);

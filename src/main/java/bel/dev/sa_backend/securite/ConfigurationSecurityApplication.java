@@ -66,13 +66,13 @@ public class ConfigurationSecurityApplication {
                             .requestMatchers(HttpMethod.GET, "/produit/produits" ).permitAll()
                             .requestMatchers(HttpMethod.GET, "/produit/categories" ).permitAll()
                             .requestMatchers(HttpMethod.POST, "/produit/creer" ).permitAll()
+                            .requestMatchers(HttpMethod.POST, "/produit/upload/*").permitAll()
                             .requestMatchers(HttpMethod.PUT, "/produit/update/*" ).permitAll()
                             .requestMatchers(HttpMethod.DELETE, "/produit/delete/*" ).permitAll()
                            .requestMatchers(HttpMethod.GET, "/produit/info/*" ).permitAll()
-                            // Premier ajout (pas de sessionId dans l’URL)
                             .requestMatchers(HttpMethod.POST, "/guest-cart/items").permitAll()
 
-                            // Ajouts suivants (avec sessionId)
+                            
                             .requestMatchers(HttpMethod.POST, "/guest-cart/*/items").permitAll()
                             .requestMatchers(HttpMethod.GET, "/guest-cart/items/*").permitAll()
                             .requestMatchers(HttpMethod.DELETE, "/guest-cart/items/delete/*/*").permitAll()
@@ -84,6 +84,12 @@ public class ConfigurationSecurityApplication {
                             .requestMatchers(HttpMethod.PUT, "/api/address/*").authenticated()
                             .requestMatchers(HttpMethod.POST, "/api/address/").authenticated()
                             .requestMatchers(HttpMethod.GET, "/api/commande/retreive").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/api/commande/admin/retreive").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/api/commande/admin/retreive/*").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/api/commande/admin/update-status/*").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/api/commande/user/cancel-commande/*").authenticated()
+                            .requestMatchers(HttpMethod.GET, "/api/commande/user/info-commande/*").authenticated()
+                            .requestMatchers(HttpMethod.GET,"/utilisateurs/auth/me").authenticated()
                             .anyRequest().authenticated()
             )
             .sessionManagement(

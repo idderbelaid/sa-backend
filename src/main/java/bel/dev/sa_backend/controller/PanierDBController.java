@@ -87,7 +87,7 @@ public class PanierDBController {
     }
 
      // DELETE: supprimer un item du panier
-    @DeleteMapping("/item/{cartId}/{itemId}")
+    @DeleteMapping("item/{cartId}/{itemId}")
     public ResponseEntity<Void> diminuerQantity(
             @PathVariable String cartId,
             @PathVariable String itemId
@@ -96,7 +96,7 @@ public class PanierDBController {
         return ResponseEntity.noContent().build();
     }
 
-        // POST: ajouter/sauvegarder un item
+    // POST: ajouter/sauvegarder un item
     @PostMapping("item/{cartId}/{itemId}")
     public ResponseEntity<Void> increaseItem(
             @PathVariable String cartId,

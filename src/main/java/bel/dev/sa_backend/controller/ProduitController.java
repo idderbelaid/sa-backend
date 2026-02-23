@@ -2,20 +2,20 @@ package bel.dev.sa_backend.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import bel.dev.sa_backend.dto.PageResponse;
 import bel.dev.sa_backend.dto.ProduitDTO;
-import bel.dev.sa_backend.entities.Produit;
-import bel.dev.sa_backend.entities.Sentiment;
+
 import bel.dev.sa_backend.service.ProduitService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,13 +25,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.IOException;
+import java.nio.file.*;
 
-@AllArgsConstructor
+
+
+
 @RestController
 @RequestMapping(path = "/produit", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProduitController {
 
     private final ProduitService produitService;
+    private final Path storageRoot = Paths.get("uploads/products");
+    
+    public ProduitController(ProduitService produitService) throws IOException{
+        this.produitService = produitService;
+        if(!Files.exists(storageRoot))
+            Files.createDirectories(storageRoot);
+    }
 
     @GetMapping(path = "produits")
     public @ResponseBody PageResponse<ProduitDTO> rechercher( 
@@ -43,7 +54,7 @@ public class ProduitController {
 
 
     ){
-
+ 
         return this.produitService.rechercher(search, category, page, size, sort);
     }
     
@@ -53,10 +64,16 @@ public class ProduitController {
     }
 
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "creer")
-    public void creerProduit(@RequestBody Produit produit) {
-        produitService.creer(produit);
+    @PostMapping(path = "creer", consumes = "application/json")
+    public ResponseEntity<ProduitDTO> creerProduit(@RequestBody ProduitDTO produit){
+        ProduitDTO created = produitService.creer(produit);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+    
+    @PostMapping(path = "upload/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> uploadImage(@PathVariable String id, @RequestParam("file") MultipartFile file) throws IOException{
+        produitService.upload(id, file);
+        return ResponseEntity.ok("Image uploader successfully");
     }
     
     @ResponseStatus(HttpStatus.ACCEPTED)
