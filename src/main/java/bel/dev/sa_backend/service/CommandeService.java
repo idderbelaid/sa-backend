@@ -9,10 +9,17 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import bel.dev.sa_backend.Enums.CommandeStatus;
 import bel.dev.sa_backend.Enums.PaiementStatus;
+import bel.dev.sa_backend.Specification.CommandeSpecifications;
+import bel.dev.sa_backend.Specification.ProduitSpecifications;
 import bel.dev.sa_backend.controller.requestDTO.CommandeInviteRequest;
 import bel.dev.sa_backend.controller.requestDTO.InfoUserInviteDTO;
 import bel.dev.sa_backend.controller.requestDTO.ItemCommandeDTO;
@@ -20,6 +27,7 @@ import bel.dev.sa_backend.dto.AddressDTO;
 import bel.dev.sa_backend.dto.AddressResponseDTO;
 import bel.dev.sa_backend.dto.CommandeLivraisonResponseDTO;
 import bel.dev.sa_backend.dto.CommandeResponseDTO;
+import bel.dev.sa_backend.dto.PageResponse;
 import bel.dev.sa_backend.entities.Commande;
 import bel.dev.sa_backend.entities.CommandeItem;
 import bel.dev.sa_backend.entities.CommandeUserInfo;
@@ -44,13 +52,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CommandeService{
 
-    private UtilisateurRepository utilisateurRepository;
-    private ProduitRepository produitRepository;
-    private CommandeRepository commandeRepository;
-    private PanierService panierService;
-    private InvitePanierService invitePanierService;
-    private PanierRepository panierRepository;
-    private CommandeUserInfoRepository commandeUserInfoRepository;
+    private final UtilisateurRepository utilisateurRepository;
+    private final ProduitRepository produitRepository;
+    private final CommandeRepository commandeRepository;
+    private final PanierService panierService;
+    private final InvitePanierService invitePanierService;
+    private final PanierRepository panierRepository;
+    private final CommandeUserInfoRepository commandeUserInfoRepository;
 
 
     public CommandeResponseDTO creer(CommandeInviteRequest commande, @Nullable String username, @Nullable String sessionId){
@@ -183,28 +191,75 @@ public class CommandeService{
 
 
 
-	public List<CommandeResponseDTO> retreive(String username) {
+	public PageResponse<CommandeResponseDTO> retreive(String username, String search, int page, int size, String sort) {
 		Utilisateur user = this.utilisateurRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-        List<Commande> commandes =  this.commandeRepository.findByUserInfo_Utilisateur_Id(user.getId());
-        List<CommandeResponseDTO> response = new ArrayList<>();
-        for(Commande cmd : commandes){
-            response.add(CommandeMapper.toCommandeResponseDTO(cmd));
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        if (sort != null && !sort.isBlank()) {
+            pageable = PageRequest.of(page, size, buildSort(sort));
         }
-        return response;
+         // Construire la Specification dynamique
+        Specification<Commande> spec = (root, query, cb) -> cb.conjunction();;
+
+        if (search != null && !search.isBlank()) {
+            spec = spec.and(CommandeSpecifications.nameContains(search));
+        }
+        spec = spec.and(CommandeSpecifications.utilisateurIdEquals(user.getId()));
+        Page<Commande> commandes =  this.commandeRepository.findAll(spec, pageable);
+        
+        List<CommandeResponseDTO> response = new ArrayList<>();
+
+         response = commandes.stream()
+                .map(CommandeMapper::toCommandeResponseDTO)
+                .toList();
+         return new PageResponse<>(
+            response,
+            commandes.getNumber(),
+            commandes.getSize(),
+            commandes.getTotalElements(),
+            commandes.getTotalPages(),                
+            commandes.isFirst(),
+            commandes.isLast()
+        );
 	}
-    public List<CommandeResponseDTO> adminRetreiveCommandes(String username) {
+    public PageResponse<CommandeResponseDTO> adminRetreiveAllCommandes(String username,String search, int page, int size, String sort)
+    {
+        System.out.println("Je suis la pour récup les commandes admin");
         Utilisateur user = this.utilisateurRepository.findByEmail(username)
             .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         if(user.hasRole("ADMIN")){
-            Iterable<Commande> commandes =  this.commandeRepository.findAll();
-            List<CommandeResponseDTO> response = new ArrayList<>();
-            for(Commande cmd : commandes){
-                response.add(CommandeMapper.toCommandeResponseDTO(cmd));
+            System.out.println("logique de recup toutes les commandes admin");
+            Pageable pageable = PageRequest.of(page, size);
+
+            if (sort != null && !sort.isBlank()) {
+                pageable = PageRequest.of(page, size, buildSort(sort));
             }
-            return response;
+            // Construire la Specification dynamique
+            Specification<Commande> spec = (root, query, cb) -> cb.conjunction();;
+
+            if (search != null && !search.isBlank()) {
+                spec = spec.and(CommandeSpecifications.nameContains(search));
+            }
+
+            Page<Commande> commandes =  this.commandeRepository.findAll(spec, pageable);
+            List<CommandeResponseDTO> response = new ArrayList<>();
+            response = commandes.stream()
+                .map(CommandeMapper::toCommandeResponseDTO)
+                .toList();
+            return new PageResponse<>(
+                response,
+                commandes.getNumber(),
+                commandes.getSize(),
+                commandes.getTotalElements(),
+                commandes.getTotalPages(),                
+                commandes.isFirst(),
+                commandes.isLast()
+            );
         }
-        return new ArrayList<>();
+        System.out.println("pas logique de recup toutes les commandes admin");
+        return null;
 
     }
 
@@ -276,4 +331,15 @@ public class CommandeService{
         }
         return address;
     }
+
+     private Sort buildSort(String sort) {
+        return switch (sort) {
+            case "DATE_ASC"  -> Sort.by(Sort.Direction.ASC, "createdAt");
+            case "DATE_DESC" -> Sort.by(Sort.Direction.DESC, "createdAt");
+            case "STATUS_ASC"   -> Sort.by(Sort.Direction.ASC, "status");
+            case "STATUS_DESC"  -> Sort.by(Sort.Direction.DESC, "status");
+            default -> Sort.unsorted();
+        };
+    }  
+
 }

@@ -13,15 +13,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import bel.dev.sa_backend.Enums.CommandeStatus;
+
 import bel.dev.sa_backend.controller.requestDTO.CommandeInviteRequest;
 import bel.dev.sa_backend.controller.requestDTO.UpdateStatusRequest;
 import bel.dev.sa_backend.dto.CommandeLivraisonResponseDTO;
 import bel.dev.sa_backend.dto.CommandeResponseDTO;
+import bel.dev.sa_backend.dto.PageResponse;
 import bel.dev.sa_backend.service.CommandeService;
 import lombok.AllArgsConstructor;
 
@@ -30,7 +32,10 @@ import lombok.AllArgsConstructor;
 @RequestMapping(path = "commande")
 public class CommandeController {
 
-    private CommandeService commandeService;
+    private final CommandeService commandeService;
+
+
+
     @PostMapping(path = "creer", consumes = "Application/Json")
     public CommandeResponseDTO creerCommandeInvite(@RequestBody @Valid CommandeInviteRequest commande, Principal principal,
     @RequestHeader(value = "X-Session-Id", required = false) String sessionId) {
@@ -48,12 +53,46 @@ public class CommandeController {
                     "Pour un invité, le header X-Session-Id est obligatoire."
             );
         }
-
+       
         return commandeService.creer(commande, null, sessionId);
+        
+        
     }
 
     @GetMapping(path="retreive", produces="Application/Json")
-    public List<CommandeResponseDTO> retreiveCommande( Principal principal) {
+    public @ResponseBody PageResponse<CommandeResponseDTO> retreiveUserCommande( Principal principal,
+         @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String sort
+    ) {
+        if (principal == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, 
+                    "Authentification requise pour accéder à cette ressource."
+            );
+        }
+        System.out.println("logique de recup commandes user");
+        String username = principal.getName();
+        try {
+            return commandeService.retreive(username, search, page, size, sort);
+       } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, 
+                    "Erreur lors de la création de la commande invité."
+            );
+        }
+        
+    }
+
+
+    @GetMapping(path="admin/retreive", produces="Application/Json")
+    public @ResponseBody PageResponse<CommandeResponseDTO> adminRetreiveCommandes(Principal principal,
+         @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String sort
+    ) {
         if (principal == null) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, 
@@ -61,20 +100,18 @@ public class CommandeController {
             );
         }
 
+        System.out.println("logique de recup commandes admin");
         String username = principal.getName();
-        return commandeService.retreive( username);
-    }
-    @GetMapping(path="admin/retreive", produces="Application/Json")
-    public List<CommandeResponseDTO> adminRetreiveCommandes( Principal principal) {
-         if (principal == null) {
+        System.out.println("username dans le controller admin retreive commandes : " + username + ", search : " + search + ", page : " + page + ", size : " + size + ", sort : " + sort);
+        try {
+            return commandeService.adminRetreiveAllCommandes(username, search, page, size, sort);
+        } catch (Exception e) {
             throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, 
-                    "Authentification requise pour accéder à cette ressource."
+                    HttpStatus.INTERNAL_SERVER_ERROR, 
+                    "Erreur lors de la récupération des commandes admin."+e.getMessage()
             );
         }
-
-        String username = principal.getName();
-        return commandeService.adminRetreiveCommandes( username);
+        
     }
 
     @GetMapping(path="admin/retreive/{id}", produces="Application/Json")
