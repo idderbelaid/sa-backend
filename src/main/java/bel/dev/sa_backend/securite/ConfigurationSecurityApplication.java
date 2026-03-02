@@ -90,6 +90,9 @@ public class ConfigurationSecurityApplication {
                             .requestMatchers(HttpMethod.GET, "/api/commande/user/cancel-commande/*").authenticated()
                             .requestMatchers(HttpMethod.GET, "/api/commande/user/info-commande/*").authenticated()
                             .requestMatchers(HttpMethod.GET,"/utilisateurs/auth/me").authenticated()
+                            .requestMatchers(HttpMethod.GET,"/favoris/retreive/*").authenticated()
+                            .requestMatchers(HttpMethod.DELETE,"/favoris/delete/*").authenticated()
+                            .requestMatchers(HttpMethod.POST,"/favoris/add/*").authenticated()
                             .anyRequest().authenticated()
             )
             .sessionManagement(

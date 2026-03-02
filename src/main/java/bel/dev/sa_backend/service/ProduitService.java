@@ -72,7 +72,7 @@ public class ProduitService {
         );
     }
   
-    private ProduitDTO toDTO(Produit produit) {
+    public ProduitDTO toDTO(Produit produit) {
         return new ProduitDTO(  
             produit.getId(), 
             produit.getName(),         

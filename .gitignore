@@ -37,3 +37,5 @@ build/
 # Secrets
 .env
 .env.*
+src/main/resources/application.properties
+src/main/resources/docker-compose.yml
