@@ -41,6 +41,13 @@ public class Sentiment {
     private Utilisateur utilisateur;
 
     private Date creation;
+    
+    @ManyToOne
+    @JoinColumn(name = "produit_id")
+    private Produit produit;
+
+
+
 
 
 

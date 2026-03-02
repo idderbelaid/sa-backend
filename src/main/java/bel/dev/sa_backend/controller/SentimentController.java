@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import bel.dev.sa_backend.Enums.TypeSentiment;
+import bel.dev.sa_backend.controller.requestDTO.SentimentRequest;
 import bel.dev.sa_backend.dto.SentimentDTO;
 import bel.dev.sa_backend.entities.Sentiment;
 import bel.dev.sa_backend.service.SentimentService;
@@ -35,7 +35,7 @@ public class SentimentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "creer")
-    public void creer(@RequestBody Sentiment sentiment){
+    public void creer(@RequestBody SentimentRequest sentiment){
          this.sentimentService.creer(sentiment);
     }
 
@@ -45,6 +45,11 @@ public class SentimentController {
     public @ResponseBody List<SentimentDTO> rechercher(@RequestParam(required = false) TypeSentiment type){
         return this.sentimentService.rechercher(type);
     }
+    @GetMapping(path = "sentiments/produit/{produitId}")
+    public @ResponseBody List<SentimentDTO> rechercherParProduit(@PathVariable String produitId){
+        return this.sentimentService.rechercherParProduit(produitId);
+    }
+
 
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(path = "delete/{id}")

@@ -332,7 +332,7 @@ public class CommandeService{
         return address;
     }
 
-     private Sort buildSort(String sort) {
+    private Sort buildSort(String sort) {
         return switch (sort) {
             case "DATE_ASC"  -> Sort.by(Sort.Direction.ASC, "createdAt");
             case "DATE_DESC" -> Sort.by(Sort.Direction.DESC, "createdAt");
