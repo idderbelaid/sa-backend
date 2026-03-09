@@ -96,14 +96,14 @@ public class ProduitService {
         try{
             Produit product = this.dtoToProduct(produit);
             //product.setCover(imageUrl);
-            System.out.println("voici le produit : " + produit.category());
+            System.out.println("voici le produit : " + produit.getCategory());
             String random = UUID.randomUUID().toString().substring(0, 6).toUpperCase();
             System.out.println("random : " + random);
             product.setId(random);
             product = this.produitRepository.save(product); 
             return this.toDTO(product);
         }catch (Exception e) {
-            log.error("Erreur", e);
+            e.printStackTrace();
             return null; // ou null / un DTO "vide"
         }
 
@@ -150,31 +150,31 @@ public class ProduitService {
         Produit product = this.produitRepository.findById(id)
             .orElseThrow( () -> new UsernameNotFoundException("Aucun produit avec cet identificant"));
         System.out.println("produit trouvé :" +product.getName());
-        System.out.println("on va changer les valeurs de light  :" +produit.light());
-        System.out.println("on va changer les valeurs de  water :" +produit.water());
+        System.out.println("on va changer les valeurs de light  :" +produit.getLight());
+        System.out.println("on va changer les valeurs de  water :" +produit.getWater());
         // compare chauqe element
-        if(product.getName() != null &&!product.getName().equals(produit.name()))
-            product.setName(produit.name());
-        if(product.getCategory() != null && ! product.getCategory().equals(produit.category()))
-            product.setCategory(produit.category());
-        if(product.getDescription() != null && !product.getDescription().equals(produit.description()))
-            product.setDescription(produit.description());
-        if(product.getLight()!= null && ! product.getLight().equals(produit.light()))
+        if(product.getName() != null &&!product.getName().equals(produit.getName()))
+            product.setName(produit.getName());
+        if(product.getCategory() != null && ! product.getCategory().equals(produit.getCategory()))
+            product.setCategory(produit.getCategory());
+        if(product.getDescription() != null && !product.getDescription().equals(produit.getDescription()))
+            product.setDescription(produit.getDescription());
+        if(product.getLight()!= null && ! product.getLight().equals(produit.getLight()))
         {
             System.out.println("je modifie la valeur de light");
-            product.setLight(produit.light());
+            product.setLight(produit.getLight());
         }
             
-        if(product.getWater()!= null && !product.getWater().equals(produit.water())){
+        if(product.getWater()!= null && !product.getWater().equals(produit.getWater())){
              System.out.println("je modifie la valeur de water");
-            product.setWater(produit.water());
+            product.setWater(produit.getWater());
 
         }
             
-        if(product.getPrice()!= null && !product.getPrice().equals(produit.price()))
-            product.setPrice(produit.price());
-        if(product.getQuantity() != null && !product.getQuantity().equals(produit.quantity()))
-            product.setQuantity(produit.quantity());
+        if(product.getPrice()!= null && !product.getPrice().equals(produit.getPrice()))
+            product.setPrice(produit.getPrice());
+        if(product.getQuantity() != null && !product.getQuantity().equals(produit.getQuantity()))
+            product.setQuantity(produit.getQuantity());
         System.out.println("produit trouvé :" +product.getLight());
         System.out.println("produit trouvé :" +product.getWater());
         this.produitRepository.save(product);
@@ -206,13 +206,13 @@ public class ProduitService {
 
     public Produit dtoToProduct(ProduitDTO product){
         Produit produit =  new Produit();
-        produit.setName(product.name());
-        produit.setCategory(product.category());
-        produit.setDescription(product.description());
-        produit.setLight(product.light());
-        produit.setWater(product.water());
-        produit.setPrice(product.price());
-        produit.setQuantity(product.quantity());
+        produit.setName(product.getName());
+        produit.setCategory(product.getCategory());
+        produit.setDescription(product.getDescription());
+        produit.setLight(product.getLight());
+        produit.setWater(product.getWater());
+        produit.setPrice(product.getPrice());
+        produit.setQuantity(product.getQuantity());
         return produit;
     }
 

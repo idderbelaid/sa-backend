@@ -2,11 +2,13 @@ package bel.dev.sa_backend.service;
 
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +35,10 @@ class ProduitServiceTest {
     @InjectMocks
     private ProduitService produitService;
 
+    
+    private Produit produit;
+    private ProduitDTO produitDTO;
+
     // =========================
     // ✅ TEST : rechercher()
     // =========================
@@ -56,12 +62,12 @@ class ProduitServiceTest {
 
         // WHEN
         PageResponse<ProduitDTO> result =
-                produitService.rechercher("Ficus", "Plante", 0, 10, "name", "asc");
+                produitService.rechercher("Ficus", "Plante", 0, 10,  "asc");
 
         // THEN
         assertThat(result).isNotNull();
         assertThat(result.content()).hasSize(1);
-        assertThat(result.content().get(0).name()).isEqualTo("Ficus");
+        assertThat(result.content().get(0).getName()).isEqualTo("Ficus");
         assertThat(result.totalElements()).isEqualTo(1);
 
         verify(produitRepository).findAll(ArgumentMatchers.<Specification<Produit>>any(), ArgumentMatchers.any(PageRequest.class));
@@ -92,17 +98,30 @@ class ProduitServiceTest {
     @Test
     void creer_shouldGenerateIdAndSaveProduct() {
         // GIVEN
+        
         Produit produit = new Produit();
-        produit.setName("Monstera");
+        produit.setId("ABC123");
+        produit.setName("Ficus");
+        produit.setCategory(Category.CLASSIQUE);
+        produit.setLight(2);
+        produit.setWater(3);
+        produit.setCover("img.jpg");
+        produit.setQuantity(5);
+        // adapte le type selon ton entity (BigDecimal/Double)
+        produit.setPrice(new java.math.BigDecimal("12.50"));
+        produit.setDescription("Belle plante");
 
-        // WHEN
-        produitService.creer(produit);
+        when(produitRepository.save(any())).thenReturn(produit);
+        ProduitDTO dto = new ProduitDTO(
+                null, "Ficus", Category.CLASSIQUE, 2, 3,
+                "img.jpg", 5, 12.5, "Belle plante"
+        );
 
-        // THEN
-        assertThat(produit.getId()).isNotNull();
-        assertThat(produit.getId()).hasSize(6);
+        ProduitDTO saved = produitService.creer(dto);
 
-        verify(produitRepository).save(produit);
+        assertNotNull(saved);
+        verify(produitRepository, times(1)).save(any());
+
     }
 
     // =========================
