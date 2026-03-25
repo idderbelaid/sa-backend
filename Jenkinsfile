@@ -2,34 +2,63 @@ pipeline {
     agent any
 
     tools {
-        // Si tu utilises Maven ou Gradle
-        maven 'Maven 3.8.1' // ou le nom configuré dans Jenkins
+        maven 'Maven'
+        jdk 'JDK17'
+    }
+
+    environment {
+        NEXUS_URL = 'http://10.0.128.227:8081'
+        SONAR_URL = 'http://<sonarqube-ip>:9000'
     }
 
     stages {
-        stage('Cloner le projet') {
+
+        stage('Checkout') {
             steps {
-                git branch: 'main', url:  'https://github.com/idderbelaid/sa-backend.git'//update url of git repository
+                git branch: 'develop',
+                    credentialsId: 'github-token',
+                    url: 'https://github.com/idderbelaid/sa-backend.gi'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'chmod +x mvnw'
-                sh './mvnw clean package -DskipTests' // ou './gradlew build' si tu utilises Gradle
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('Tests') {
             steps {
-                sh './mvnw test' // ou './gradlew test'
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
             }
         }
 
-        stage('Archive') {
+        stage('SonarQube Analysis') {
             steps {
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn sonar:sonar'
+                }
             }
+        }
+
+        stage('Deploy to Nexus') {
+            steps {
+                sh 'mvn deploy -DskipTests'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Pipeline terminé avec succès !'
+        }
+        failure {
+            echo '❌ Pipeline échoué !'
         }
     }
 }
