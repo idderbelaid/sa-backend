@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,12 +23,12 @@ import bel.dev.sa_backend.dto.UtilisateurResponseDTO;
 import bel.dev.sa_backend.entities.Role;
 import bel.dev.sa_backend.entities.Utilisateur;
 import bel.dev.sa_backend.entities.Validation;
-import bel.dev.sa_backend.mapper.SentimentMapper;
+
 import bel.dev.sa_backend.mapper.UtilisateurMapper;
 import bel.dev.sa_backend.repository.RoleRepository;
 import bel.dev.sa_backend.repository.UtilisateurRepository;
 import bel.dev.sa_backend.service.rabbitMQ.KafkaProducer;
-import bel.dev.sa_backend.service.rabbitMQ.RabbitMQService;
+//import bel.dev.sa_backend.service.rabbitMQ.RabbitMQService;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,6 @@ public class UtilisateurService implements UserDetailsService {
     private UtilisateurRepository utilisateurRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private RoleRepository roleRepository;
-    private RabbitMQService rabbitMQService;
     private KafkaProducer KafkaProducer;
 
 
@@ -109,7 +108,6 @@ public class UtilisateurService implements UserDetailsService {
         Utilisateur userBDD = this.loadUserByUsername(client.getEmail());
         if(userBDD == null)
             userBDD = this.utilisateurRepository.save(client);
-        
         return userBDD; 
     }
 
@@ -156,12 +154,6 @@ public class UtilisateurService implements UserDetailsService {
                 .orElseThrow( () -> new UsernameNotFoundException("Aucun user avec cet identificant"));
         System.out.println("Le nom : " + user.getNom());
         return UtilisateurMapper.toResponseDTO(user);
-    }
-   
-
-   
-
-
-   
+    } 
 
 }

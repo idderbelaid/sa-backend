@@ -6,7 +6,6 @@ package bel.dev.sa_backend.service;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,10 +24,12 @@ import bel.dev.sa_backend.dto.PanierDTO;
 import bel.dev.sa_backend.entities.Panier;
 import bel.dev.sa_backend.entities.PanierItem;
 import bel.dev.sa_backend.entities.Produit;
+import bel.dev.sa_backend.entities.Utilisateur;
 import bel.dev.sa_backend.mapper.PanierMapper;
 import bel.dev.sa_backend.repository.PanierItemRepository;
 import bel.dev.sa_backend.repository.PanierRepository;
 import bel.dev.sa_backend.repository.ProduitRepository;
+import bel.dev.sa_backend.repository.UtilisateurRepository;
 import bel.dev.sa_backend.service.utils.GestionPanier;
 
 import java.math.BigDecimal;
@@ -48,7 +49,8 @@ class PanierServiceTest {
     private ProduitRepository produitRepository;
     @Mock
     private PanierMapper panierMapper;
-   
+    @Mock
+    private UtilisateurRepository utilisateurRepository;
     @Mock
     private StringRedisTemplate stringRedis;
 
@@ -88,18 +90,25 @@ class PanierServiceTest {
 
     @Test
     void testFindOrCreateUserCart_ShouldReturnPanierDTO() {
+       
         String userId = "user123";
-        PanierDTO panier = new PanierDTO();
-        panier.setPanierId("cart123");
-
-        when(panierService.findOrCreateUserCart(userId)).thenReturn(panier);
-        when(panierItemRepository.findByPanierId(panier.getPanierId())).thenReturn(Collections.emptyList());
-        //when(panierMapper.toPanierDTO(eq(panier), anyList())).thenReturn(new PanierDTO());
+        
+        // Mocker les dépendances utilisées par findOrCreateUserCart
+        Utilisateur utilisateur = new Utilisateur();
+        utilisateur.setEmail(userId);
+        
+        Panier panier = new Panier();
+        panier.setId("cart123");
+        
+        when(utilisateurRepository.findByEmail(userId)).thenReturn(Optional.of(utilisateur));
+        when(panierRepository.findByUserId(userId)).thenReturn(Optional.of(panier));
+        when(panierMapper.toPanierDTO(any(), anyList())).thenReturn(new PanierDTO());
 
         PanierDTO result = panierService.findOrCreateUserCart(userId);
 
         assertNotNull(result);
-        verify(panierService).findOrCreateUserCart(userId);
+        verify(utilisateurRepository).findByEmail(userId);
+
     }
 
     @Test

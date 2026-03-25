@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.stripe.model.v2.core.Account.Defaults.Profile;
+
 
 import bel.dev.sa_backend.dto.AddressDTO;
 import bel.dev.sa_backend.dto.ProfileDTO;

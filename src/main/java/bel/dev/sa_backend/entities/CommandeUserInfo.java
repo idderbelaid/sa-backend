@@ -3,7 +3,6 @@ package bel.dev.sa_backend.entities;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;

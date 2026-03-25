@@ -20,7 +20,7 @@ import bel.dev.sa_backend.entities.Jwt;
 import bel.dev.sa_backend.entities.RefreshToken;
 import bel.dev.sa_backend.entities.Utilisateur;
 import bel.dev.sa_backend.repository.JwtRepository;
-import bel.dev.sa_backend.repository.RefreshTokenRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

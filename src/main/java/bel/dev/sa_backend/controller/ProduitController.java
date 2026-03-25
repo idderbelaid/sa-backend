@@ -1,6 +1,6 @@
 package bel.dev.sa_backend.controller;
 
-import lombok.AllArgsConstructor;
+
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 

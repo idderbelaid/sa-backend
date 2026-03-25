@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.validation.Valid;
+
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -19,8 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import bel.dev.sa_backend.Enums.PanierStatus;
-import bel.dev.sa_backend.controller.InvitePanierController.AddItemResponse;
-import bel.dev.sa_backend.controller.PanierDBController.AddCartItemRequest;
+
 import bel.dev.sa_backend.controller.PanierDBController.CartItemResponse;
 import bel.dev.sa_backend.controller.PanierDBController.CreateCartItemRequest;
 import bel.dev.sa_backend.controller.PanierDBController.UpdateCartItemRequest;

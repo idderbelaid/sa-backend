@@ -1,6 +1,5 @@
 package bel.dev.sa_backend.entities;
 
-
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 

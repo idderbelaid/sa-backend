@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import bel.dev.sa_backend.dto.FavorisDTO;
-import bel.dev.sa_backend.dto.ProduitDTO;
+
 import bel.dev.sa_backend.entities.Favoris;
 import bel.dev.sa_backend.entities.Produit;
 import bel.dev.sa_backend.entities.Utilisateur;

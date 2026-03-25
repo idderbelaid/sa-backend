@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import bel.dev.sa_backend.Enums.TypeDeRole;
-import bel.dev.sa_backend.entities.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

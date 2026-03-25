@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.validation.Valid;
+
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import bel.dev.sa_backend.Enums.CommandeStatus;
 import bel.dev.sa_backend.Enums.PaiementStatus;
 import bel.dev.sa_backend.Specification.CommandeSpecifications;
-import bel.dev.sa_backend.Specification.ProduitSpecifications;
+
 import bel.dev.sa_backend.controller.requestDTO.CommandeInviteRequest;
 import bel.dev.sa_backend.controller.requestDTO.InfoUserInviteDTO;
 import bel.dev.sa_backend.controller.requestDTO.ItemCommandeDTO;

@@ -50,6 +50,7 @@ public class SentimentService {
         commentaire.setCreation(new java.util.Date());
         //commentaire le sentiment
 
+        //juste une démo pour montrer comment on peut faire du sentiment analysis
         if(sentiment.getTexte().contains("pas"))
             commentaire.setType(TypeSentiment.NEGATIF);
         else
@@ -73,7 +74,7 @@ public class SentimentService {
         }
         
     }
-
+    
     public void supprimer(int id) {
         this.sentimentRepository.deleteById(id);
     }

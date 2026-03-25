@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import bel.dev.sa_backend.Enums.TypeSentiment;
 import bel.dev.sa_backend.controller.requestDTO.SentimentRequest;
 import bel.dev.sa_backend.dto.SentimentDTO;
-import bel.dev.sa_backend.entities.Sentiment;
+
 import bel.dev.sa_backend.service.SentimentService;
 
 @RestController
