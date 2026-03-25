@@ -10,7 +10,7 @@ pipeline {
         NEXUS_URL = 'http://10.0.128.227:8081'
         SONAR_URL = 'http://10.0.132.106:9000'
         
-        / ✅ Ajout dockerhub credentials
+        // ✅ Ajout dockerhub credentials
         DOCKERHUB = credentials('dockerhub-credentials')
 
         // ✅ Le nom complet de ton repo DockerHub
