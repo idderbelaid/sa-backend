@@ -17,7 +17,7 @@ pipeline {
             steps {
                 git branch: 'develop',
                     credentialsId: 'github-token',
-                    url: 'https://github.com/idderbelaid/sa-backend.gi'
+                    url: 'https://github.com/idderbelaid/sa-backend.git'
             }
         }
 
