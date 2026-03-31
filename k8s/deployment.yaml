@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sa-backend
+  labels:
+    app: sa-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sa-backend
+  template:
+    metadata:
+      labels:
+        app: sa-backend
+    spec:
+      containers:
+        - name: sa-backend
+          image: belaididder/sa-backend:latest   # ✅ image poussée par Jenkins
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
