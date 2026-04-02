@@ -53,20 +53,29 @@ pipeline {
             }
         }
 
+        
         stage('Deploy to Nexus') {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'nexus',
-                    usernameVariable: 'NEXUS_USERNAME',
+                    usernameVariable: 'NEXUS_USER',
                     passwordVariable: 'NEXUS_PASSWORD'
                 )]) {
-                    sh '''
-                        echo "➡ Déploiement sur Nexus avec l’utilisateur : $NEXUS_USERNAME"
-                        mvn -s settings.xml clean deploy -DskipTests
-                    '''
+        
+                    configFileProvider([configFile(
+                        fileId: 'settings-nexus',       // ✅ EXACTEMENT l’ID que tu as mis dans Jenkins
+                        targetLocation: 'settings.xml'  // ✅ Le nom attendu par Maven
+                    )]) {
+        
+                        sh '''
+                            echo "➡ Déploiement sur Nexus avec l’utilisateur : $NEXUS_USER"
+                            mvn -s settings.xml clean deploy -DskipTests
+                        '''
+                    }
                 }
             }
         }
+
 
         /* ===================================================
            ✅ PARTIE DOCKER : Build, Tag, Login, Push
