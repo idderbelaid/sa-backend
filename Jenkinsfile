@@ -55,9 +55,19 @@ pipeline {
 
         stage('Deploy to Nexus') {
             steps {
-                sh 'mvn deploy -DskipTests'
+                withCredentials([usernamePassword(
+                    credentialsId: 'nexus',
+                    usernameVariable: 'NEXUS_USERNAME',
+                    passwordVariable: 'NEXUS_PASSWORD'
+                )]) {
+                    sh '''
+                        echo "➡ Déploiement sur Nexus avec l’utilisateur : $NEXUS_USERNAME"
+                        mvn -s settings.xml clean deploy -DskipTests
+                    '''
+                }
             }
         }
+
         /* ===================================================
            ✅ PARTIE DOCKER : Build, Tag, Login, Push
            =================================================== */
